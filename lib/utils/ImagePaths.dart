@@ -1,0 +1,25 @@
+
+class ImagePaths{
+  static const String appLogo = "assets/image/ic_app_logo.png";
+  static const String appLogoDark = "assets/image/ic_app_logo_dark.png";
+  static const String email = "assets/image/ic_email.png";
+  static const String password = "assets/image/ic_password.png";
+  static const String user = "assets/image/ic_user.png";
+  static const String user1 = "assets/image/ic_user_1.png";
+  static const String age = "assets/image/ic_age.png";
+  static const String gender = "assets/image/ic_gender.png";
+  static const String filter = "assets/image/ic_filter.png";
+  static const String circleApple = "assets/image/ic_circle_apple.png";
+  static const String apple = "assets/image/ic_apple.png";
+  static const String circleInstagram = "assets/image/ic_circle_instagram.png";
+  static const String instagram = "assets/image/ic_instagram.png";
+  static const String circleFacebook = "assets/image/ic_circle_facebook.png";
+  static const String facebook = "assets/image/ic_facebook.png";
+  static const String circleGames = "assets/image/ic_circle_games.png";
+  static const String games = "assets/image/ic_games.png";
+  static const String google = "assets/image/ic_google.png";
+  static const String rightCheck = "assets/image/ic_successfully_check.png";
+  static const String rightCheckDark = "assets/image/ic_successfully_check_dark.png";
+  static const String countryIndia = "assets/image/ic_india.png";
+  static const String noImage = "assets/image/ic_no_image.jpg";
+}
