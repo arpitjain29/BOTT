@@ -72,7 +72,6 @@ class _HomeScreen extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<HomeProvider>(context, listen: false).fetchMovies(context);
       Provider.of<HomeProvider>(context, listen: false).fetchProfile(context);
-      // Provider.of<HomeProvider>(context, listen: false).fetchFilterList();
     });
     searchText.addListener(_onSearchChanged);
     filterListApi();
@@ -90,10 +89,6 @@ class _HomeScreen extends State<HomeScreen> {
     filterListModel = await UtilApi.getFilterListMethod();
 
     if (filterListModel!.status == "200") {
-      print("filter ========== $filterListModel");
-      print("filter data ========== ${filterListModel!.data}");
-      print(
-          "filter data application ========== ${filterListModel!.data!.applications}");
       print(
           "filter data application name ========== ${filterListModel!.data!.applications![0].name}");
     } else {
@@ -144,20 +139,20 @@ class _HomeScreen extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        FadeInImage.assetNetwork(
-                          height: 190,
-                          width: 120,
-                          fit: BoxFit.cover,
-                          placeholder: ImagePaths.noImage,
-                          image: listData?.images?.image ?? "",
-                          imageErrorBuilder: (context, error, stack) {
-                            return Image.asset(
-                              height: 190,
-                              width: 120,
-                              fit: BoxFit.cover,
-                              ImagePaths.noImage,
-                            );
-                          },
+                        Expanded(
+                          child: FadeInImage.assetNetwork(
+                            height: MediaQuery.of(context).size.height / 3,
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.fill,
+                            placeholder: ImagePaths.noImage,
+                            image: listData?.images?.image ?? "",
+                            imageErrorBuilder: (context, error, stack) {
+                              return Image.asset(
+                                fit: BoxFit.fill,
+                                ImagePaths.noImage,
+                              );
+                            },
+                          ),
                         ),
                         Expanded(
                           child: Container(
@@ -294,8 +289,8 @@ class _HomeScreen extends State<HomeScreen> {
                             ),
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          margin: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
+                          margin:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),
                           child: Text(
@@ -322,8 +317,8 @@ class _HomeScreen extends State<HomeScreen> {
                             ),
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          margin: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
+                          margin:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),
                           child: Text(
@@ -350,8 +345,8 @@ class _HomeScreen extends State<HomeScreen> {
                             ),
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          margin: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
+                          margin:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),
                           child: Text(
@@ -579,6 +574,9 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
+  double bottScore = 0;
+  double priceView = 0;
+
   void _showAlertFilterDialog(BuildContext context, HomeProvider homeProvider) {
     filterListFunction(0);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -682,7 +680,7 @@ class _HomeScreen extends State<HomeScreen> {
                                   "mostPopularity": "",
                                   "director": "",
                                   "origin": filterMap["origin"]!.join(','),
-                                  "BOTT_score": "",
+                                  "BOTT_score": bottScore.toInt().toString(),
                                   "build_recently": "",
                                   "genre": filterMap["genre"]!.join(','),
                                   "language": filterMap["language"]!.join(','),
@@ -702,12 +700,12 @@ class _HomeScreen extends State<HomeScreen> {
                               },
                               child: Container(
                                 margin: const EdgeInsets.symmetric(
-                                    vertical: 13, horizontal: 10),
+                                    vertical: 2, horizontal: 2),
                                 child: TextView(label: "Apply"),
                               ),
                             ),
                             SizedBox(
-                              width: 10,
+                              width: 5,
                             ),
                             ElevatedButton(
                               onPressed: () {
@@ -718,7 +716,7 @@ class _HomeScreen extends State<HomeScreen> {
                               },
                               child: Container(
                                 margin: const EdgeInsets.symmetric(
-                                    vertical: 13, horizontal: 10),
+                                    vertical: 2, horizontal: 2),
                                 child: TextView(label: "Reset"),
                               ),
                             ),
@@ -801,105 +799,212 @@ class _HomeScreen extends State<HomeScreen> {
                               // Right Filter Items
                               Expanded(
                                 flex: 3,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      selectCategoryTitle ?? '',
-                                      style: TextStyle(
-                                          color: isDark
-                                              ? AppColors.colorWhite
-                                              : AppColors.colorBlack,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          fontFamily: Fonts.metropolisRegular),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: filterListArray.length,
-                                        itemBuilder: (context, index) {
-                                          Application? applicationFilterItem;
-                                          Type? typeFilterItem;
-                                          String? popularityString;
-                                          if (filterListArray[index]
-                                              is Application) {
-                                            applicationFilterItem =
-                                                filterListArray[index]
-                                                    as Application;
-                                          } else if (filterListArray[index]
-                                              is Type) {
-                                            typeFilterItem =
-                                                filterListArray[index] as Type;
-                                          } else {
-                                            popularityString =
-                                                filterListArray[index]
-                                                    as String?;
-                                          }
-
-                                          final item = filterListArray[index];
-                                          final isSelected =
-                                              selectedFilters.contains(item);
-
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: isDark
-                                                    ? AppColors.color646D91
-                                                    : Colors.grey.shade200,
-                                                width: 2,
-                                              ),
+                                child: selectCategoryTitle ==
+                                        categoryArray[
+                                            2]
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Price",
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily:
+                                                  Fonts.metropolisRegular,
                                             ),
-                                            margin: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 10),
-                                            child: Row(
-                                              children: [
-                                                Checkbox(
-                                                  value: isSelected,
-                                                  onChanged: (bool? newValue) {
-                                                    setState(() {
-                                                      if (newValue == true) {
+                                          ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            "Price: ${priceView.toInt()}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                                  Fonts.metropolisRegular,
+                                            ),
+                                          ),
+                                          Slider(
+                                            value: priceView,
+                                            min: 0,
+                                            max: 100,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                priceView = value;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    : selectCategoryTitle ==
+                                            categoryArray[
+                                                3]
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "BOTT Score",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily:
+                                                      Fonts.metropolisRegular,
+                                                ),
+                                              ),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                "BOTT Score: ${bottScore.toInt()}",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      Fonts.metropolisRegular,
+                                                ),
+                                              ),
+                                              Slider(
+                                                value: bottScore,
+                                                min: 0,
+                                                max: 100,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    bottScore = value;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          )
+                                        : Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                selectCategoryTitle ?? '',
+                                                style: TextStyle(
+                                                    color: isDark
+                                                        ? AppColors.colorWhite
+                                                        : AppColors.colorBlack,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                    fontFamily: Fonts
+                                                        .metropolisRegular),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Expanded(
+                                                child: ListView.builder(
+                                                  itemCount:
+                                                      filterListArray.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    Application?
+                                                        applicationFilterItem;
+                                                    Type? typeFilterItem;
+                                                    String? popularityString;
+                                                    if (filterListArray[index]
+                                                        is Application) {
+                                                      applicationFilterItem =
+                                                          filterListArray[index]
+                                                              as Application;
+                                                    } else if (filterListArray[
+                                                        index] is Type) {
+                                                      typeFilterItem =
+                                                          filterListArray[index]
+                                                              as Type;
+                                                    } else {
+                                                      popularityString =
+                                                          filterListArray[index]
+                                                              as String?;
+                                                    }
+
+                                                    final item =
+                                                        filterListArray[index];
+                                                    final isSelected =
                                                         selectedFilters
-                                                            .add(item);
-                                                      } else {
-                                                        selectedFilters
-                                                            .remove(item);
-                                                      }
-                                                    });
+                                                            .contains(item);
+
+                                                    return Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: isDark
+                                                              ? AppColors
+                                                                  .color646D91
+                                                              : Colors.grey
+                                                                  .shade200,
+                                                          width: 2,
+                                                        ),
+                                                      ),
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 10,
+                                                          horizontal: 10),
+                                                      child: Row(
+                                                        children: [
+                                                          Checkbox(
+                                                            value: isSelected,
+                                                            onChanged: (bool?
+                                                                newValue) {
+                                                              setState(() {
+                                                                if (newValue ==
+                                                                    true) {
+                                                                  selectedFilters
+                                                                      .add(
+                                                                          item);
+                                                                } else {
+                                                                  selectedFilters
+                                                                      .remove(
+                                                                          item);
+                                                                }
+                                                              });
+                                                            },
+                                                            checkColor: Theme.of(
+                                                                            context)
+                                                                        .brightness ==
+                                                                    Brightness
+                                                                        .dark
+                                                                ? Colors.white
+                                                                : Colors.white,
+                                                            activeColor: Theme.of(
+                                                                            context)
+                                                                        .brightness ==
+                                                                    Brightness
+                                                                        .dark
+                                                                ? AppColors
+                                                                    .colorFF8049
+                                                                : AppColors
+                                                                    .colorFF8049,
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(
+                                                              applicationFilterItem !=
+                                                                      null
+                                                                  ? applicationFilterItem
+                                                                          .name ??
+                                                                      ''
+                                                                  : typeFilterItem
+                                                                          ?.name ??
+                                                                      popularityString ??
+                                                                      '',
+                                                              style: TextStyle(
+                                                                  color: isDark
+                                                                      ? AppColors
+                                                                          .colorWhite
+                                                                      : AppColors
+                                                                          .colorBlack,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize: 14,
+                                                                  fontFamily: Fonts
+                                                                      .metropolisRegular),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
                                                   },
                                                 ),
-                                                Expanded(
-                                                  child: Text(
-                                                    applicationFilterItem !=
-                                                            null
-                                                        ? applicationFilterItem
-                                                                .name ??
-                                                            ''
-                                                        : typeFilterItem
-                                                                ?.name ??
-                                                            popularityString ??
-                                                            '',
-                                                    style: TextStyle(
-                                                        color: isDark
-                                                            ? AppColors
-                                                                .colorWhite
-                                                            : AppColors
-                                                                .colorBlack,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 14,
-                                                        fontFamily: Fonts
-                                                            .metropolisRegular),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                              ),
+                                            ],
+                                          ),
                               ),
                             ],
                           ),
@@ -1008,8 +1113,11 @@ class _HomeScreen extends State<HomeScreen> {
                     _scaffoldKey.currentState?.openDrawer();
                   },
                   child: Container(
+                    height: 50,
+                    width: 50,
                     margin: EdgeInsets.all(10),
-                    child: Image.asset("assets/image/ic_logo_home.png"),
+                    child: Image.asset(
+                        height: 50, width: 50, ImagePaths.appLogoNew),
                   ),
                 ),
                 Expanded(
@@ -1372,8 +1480,7 @@ class _HomeScreen extends State<HomeScreen> {
                                                   child: Container(
                                                     margin:
                                                         EdgeInsets.symmetric(
-                                                            vertical: 5,
-                                                            horizontal: 5),
+                                                            vertical: 5),
                                                     child: Text(
                                                       "more options",
                                                       style: TextStyle(

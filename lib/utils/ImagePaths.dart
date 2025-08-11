@@ -1,13 +1,18 @@
 
 class ImagePaths{
   static const String appLogo = "assets/image/ic_app_logo.png";
+  static const String appLogoHome = "assets/image/ic_logo_home.png";
+  static const String appLogoNew = "assets/image/ic_app_logo_new.png";
   static const String appLogoDark = "assets/image/ic_app_logo_dark.png";
   static const String email = "assets/image/ic_email.png";
   static const String password = "assets/image/ic_password.png";
-  static const String user = "assets/image/ic_user.png";
+  static const String passwordWhite = "assets/image/ic_password_white.png";
   static const String user1 = "assets/image/ic_user_1.png";
+  static const String userWhite = "assets/image/ic_user_white.png";
   static const String age = "assets/image/ic_age.png";
+  static const String ageWhite = "assets/image/ic_age_white.png";
   static const String gender = "assets/image/ic_gender.png";
+  static const String genderWhite = "assets/image/ic_gender_white.png";
   static const String filter = "assets/image/ic_filter.png";
   static const String circleApple = "assets/image/ic_circle_apple.png";
   static const String apple = "assets/image/ic_apple.png";

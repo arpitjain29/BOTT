@@ -125,7 +125,8 @@ class _ResetPassword extends State<ResetPassword> {
                           label: "Email",
                           hintText: "Enter Your Email",
                           textController: emailText,
-                          iconPath: ImagePaths.email,
+                          icon: ImagePaths.email,
+                          whiteIcon: "assets/image/ic_email_white.png",
                           keyboardType: TextInputType.emailAddress),
                       Container(
                         margin: EdgeInsets.symmetric(vertical: 20),

@@ -88,7 +88,8 @@ class _LoginScreen extends State<LoginScreen> {
                             label: "Email",
                             hintText: "Enter Your Email",
                             textController: emailText,
-                            iconPath: ImagePaths.email,
+                            whiteIcon: "assets/image/ic_email_white.png",
+                            icon: ImagePaths.email,
                             keyboardType: TextInputType.emailAddress),
                         Container(
                           height: 5,
@@ -152,19 +153,12 @@ class _LoginScreen extends State<LoginScreen> {
                               ),
                               prefixIcon: Padding(
                                 padding: EdgeInsets.only(left: 15),
-                                child: ColorFiltered(
-                                  colorFilter: ColorFilter.mode(
-                                    Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? AppColors.colorWhite
-                                        : AppColors.colorGreyDark,
-                                    BlendMode.srcIn,
-                                  ),
-                                  child: Image.asset(
-                                    ImagePaths.password,
-                                    height: 20,
-                                    width: 20,
-                                  ),
+                                child: Image.asset(
+                                  isDark
+                                      ? ImagePaths.passwordWhite
+                                      : ImagePaths.password,
+                                  height: 20,
+                                  width: 20,
                                 ),
                               ),
                               suffixIcon: IconButton(

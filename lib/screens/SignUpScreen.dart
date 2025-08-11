@@ -74,13 +74,15 @@ class _SignUpScreen extends State<SignUpScreen> {
                         label: "Username",
                         hintText: "Enter your username",
                         textController: nameText,
-                        iconPath: ImagePaths.user,
+                        icon: ImagePaths.user1,
+                        whiteIcon: ImagePaths.userWhite,
                       ),
                       InputTextFieldWithText(
                           label: "Email",
                           hintText: "Enter email",
                           textController: emailText,
-                          iconPath: ImagePaths.email,
+                          icon: ImagePaths.email,
+                          whiteIcon: "assets/image/ic_email_white.png",
                           keyboardType: TextInputType.emailAddress),
                       SizedBox(
                         height: 5,
@@ -144,20 +146,14 @@ class _SignUpScreen extends State<SignUpScreen> {
                             ),
                             prefixIcon: Padding(
                               padding: EdgeInsets.only(left: 15),
-                              child: ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                  Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? AppColors.colorWhite
-                                      : AppColors.colorGreyDark,
-                                  BlendMode.srcIn,
-                                ),
                                 child: Image.asset(
-                                  ImagePaths.password,
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                      ? ImagePaths.passwordWhite
+                                      : ImagePaths.password,
                                   height: 20,
                                   width: 20,
                                 ),
-                              ),
                             ),
                             suffixIcon: IconButton(
                               onPressed: () {
@@ -236,19 +232,12 @@ class _SignUpScreen extends State<SignUpScreen> {
                             ),
                             prefixIcon: Padding(
                               padding: EdgeInsets.only(left: 15),
-                              child: ColorFiltered(
-                                colorFilter: ColorFilter.mode(
-                                  Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? AppColors.colorWhite
-                                      : AppColors.colorGreyDark,
-                                  BlendMode.srcIn,
-                                ),
-                                child: Image.asset(
-                                  ImagePaths.password,
-                                  height: 20,
-                                  width: 20,
-                                ),
+                              child: Image.asset(
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? ImagePaths.passwordWhite
+                                    : ImagePaths.password,
+                                height: 20,
+                                width: 20,
                               ),
                             ),
                             suffixIcon: IconButton(

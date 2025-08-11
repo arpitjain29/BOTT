@@ -11,10 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/LoginUserModel.dart';
+import '../provider/HomeProvider.dart';
 import '../utils/AppColors.dart';
 import '../utils/Fonts.dart';
 import '../utils/HelperSaveData.dart';
@@ -221,6 +223,8 @@ class _ProfileScreen extends State<ProfileScreen> {
           msg: profileModel!.message!,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
+      final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+      await homeProvider.fetchProfile(context);
       setState(() {
         getProfileApi();
       });
@@ -278,31 +282,35 @@ class _ProfileScreen extends State<ProfileScreen> {
                               label: "Username",
                               hintText: "Enter your username",
                               textController: nameText,
-                              iconPath: ImagePaths.user1,
+                              icon: ImagePaths.user1,
+                              whiteIcon: ImagePaths.userWhite,
                             ),
                             InputTextFieldWithText(
                               label: "Full Name",
                               hintText: "Enter full name",
                               textController: fullNameText,
-                              iconPath: ImagePaths.user1,
+                              icon: ImagePaths.user1,
+                              whiteIcon: ImagePaths.userWhite,
                             ),
                             InputTextFieldWithText(
                                 label: "Email",
                                 hintText: "Enter email",
                                 textController: emailText,
-                                iconPath: ImagePaths.email,
+                                icon: ImagePaths.email,
+                                whiteIcon: "assets/image/ic_email_white.png",
                                 keyboardType: TextInputType.emailAddress),
                             InputTextFieldWithText(
                               label: "Age",
                               hintText: "Enter age",
                               textController: ageText,
                               keyboardType: TextInputType.number,
+                              icon: ImagePaths.age,
+                              whiteIcon: ImagePaths.ageWhite,
                               inputFormatters: [
                                 LengthLimitingTextInputFormatter(2),
                                 FilteringTextInputFormatter.digitsOnly,
                                 RangeInputFormatter(min: 15, max: 99),
                               ],
-                              iconPath: ImagePaths.age,
                             ),
                             Container(
                               margin: EdgeInsets.only(top: 8),
@@ -329,15 +337,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   Container(
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 10),
-                                    child: ColorFiltered(
-                                      colorFilter: ColorFilter.mode(
-                                        Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? AppColors.colorWhite
-                                            : AppColors.colorGreyDark,
-                                        BlendMode.srcIn,
-                                      ),
-                                      child: Image.asset(ImagePaths.gender),
+                                    child: Image.asset(
+                                      isDark
+                                          ? ImagePaths.genderWhite
+                                          : ImagePaths.gender,
                                     ),
                                   ),
                                   Expanded(
