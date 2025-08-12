@@ -1,13 +1,13 @@
-import 'package:bott/utils/UserDataSave.dart';
-import 'package:bott/utils/UtilApi.dart';
+import 'package:bott/utils/user_data_save.dart';
+import 'package:bott/utils/util_api.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/DashboardGetMovieModel.dart';
-import '../model/LoginUserModel.dart';
-import '../model/ProfileModel.dart';
-import '../utils/HelperSaveData.dart';
+import '../model/dashboard_get_movie_model.dart';
+import '../model/login_user_model.dart';
+import '../model/profile_model.dart';
+import '../utils/helper_save_data.dart';
 
 class HomeProvider extends ChangeNotifier {
   DashboardGetMovieModel? _moviesList;

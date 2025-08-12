@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:bott/model/CountryModel.dart';
-import 'package:bott/model/ProfileModel.dart';
-import 'package:bott/screens/SignUpScreen.dart';
-import 'package:bott/utils/ImagePaths.dart';
-import 'package:bott/utils/InputTextFieldWithText.dart';
-import 'package:bott/utils/TextView.dart';
-import 'package:bott/utils/UserDataSave.dart';
+import 'package:bott/model/country_model.dart';
+import 'package:bott/model/profile_model.dart';
+import 'package:bott/screens/sign_up_screen.dart';
+import 'package:bott/utils/image_paths.dart';
+import 'package:bott/utils/input_text_field_with_text.dart';
+import 'package:bott/utils/text_view.dart';
+import 'package:bott/utils/user_data_save.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,13 +15,13 @@ import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/LoginUserModel.dart';
-import '../provider/HomeProvider.dart';
-import '../utils/AppColors.dart';
-import '../utils/Fonts.dart';
-import '../utils/HelperSaveData.dart';
-import '../utils/RangeInputFormatter.dart';
-import '../utils/UtilApi.dart';
+import '../model/login_user_model.dart';
+import '../provider/home_provider.dart';
+import '../utils/app_colors.dart';
+import '../utils/fonts_class.dart';
+import '../utils/helper_save_data.dart';
+import '../utils/range_input_formatter.dart';
+import '../utils/util_api.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -57,7 +57,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       tokenUser = pref?.getString(UserDataSave.token);
     } else {
       user = await HelperSaveData.helperSaveData.loadLoginUsers();
-      print("data login =======  " + user!.data!.accessToken!.token.toString());
+      print("data login =======  ${user!.data!.accessToken!.token}");
       tokenUser = user?.data?.accessToken?.token ?? '';
     }
     getProfileApi();
@@ -284,6 +284,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                               textController: nameText,
                               icon: ImagePaths.user1,
                               whiteIcon: ImagePaths.userWhite,
+                              readOnly: false,
                             ),
                             InputTextFieldWithText(
                               label: "Full Name",
@@ -291,6 +292,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                               textController: fullNameText,
                               icon: ImagePaths.user1,
                               whiteIcon: ImagePaths.userWhite,
+                              readOnly: false,
                             ),
                             InputTextFieldWithText(
                                 label: "Email",
@@ -298,7 +300,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                                 textController: emailText,
                                 icon: ImagePaths.email,
                                 whiteIcon: "assets/image/ic_email_white.png",
-                                keyboardType: TextInputType.emailAddress),
+                                keyboardType: TextInputType.emailAddress,
+                                readOnly: true),
                             InputTextFieldWithText(
                               label: "Age",
                               hintText: "Enter age",
@@ -311,6 +314,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                 FilteringTextInputFormatter.digitsOnly,
                                 RangeInputFormatter(min: 15, max: 99),
                               ],
+                              readOnly: false,
                             ),
                             Container(
                               margin: EdgeInsets.only(top: 8),
@@ -399,11 +403,11 @@ class _ProfileScreen extends State<ProfileScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: Image.asset(ImagePaths.countryIndia),
-                                  ),
+                                  // Container(
+                                  //   margin:
+                                  //       EdgeInsets.symmetric(horizontal: 10),
+                                  //   child: Image.asset(ImagePaths.countryIndia),
+                                  // ),
                                   Expanded(
                                     child: DropdownButton<String>(
                                       isExpanded: true,
@@ -418,19 +422,38 @@ class _ProfileScreen extends State<ProfileScreen> {
                                       items: uniqueCountries
                                           .map((DatumCountry items) {
                                         return DropdownMenuItem<String>(
-                                          value: items.countryName,
-                                          child: Text(
-                                            items.countryName!,
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? AppColors.colorWhite
-                                                  : AppColors.color4D4D4D,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16,
-                                              fontFamily: Fonts.interMedium,
-                                            ),
-                                          ),
-                                        );
+                                            value: items.countryName,
+                                            child: Row(
+                                              children: [
+                                                ClipOval(
+                                                  child: Image.network(
+                                                    items.countryFlag ?? '',
+                                                    width: 24,
+                                                    height: 24,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                            error,
+                                                            stackTrace) =>
+                                                        Icon(Icons.flag),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  items.countryName!,
+                                                  style: TextStyle(
+                                                    color: isDark
+                                                        ? AppColors.colorWhite
+                                                        : AppColors.color4D4D4D,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16,
+                                                    fontFamily:
+                                                        Fonts.interMedium,
+                                                  ),
+                                                ),
+                                              ],
+                                            ));
                                       }).toList(),
                                       onChanged: (String? newValue) {
                                         setState(() {
@@ -468,11 +491,6 @@ class _ProfileScreen extends State<ProfileScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: Image.asset(ImagePaths.countryIndia),
-                                  ),
                                   Expanded(
                                     child: DropdownButton<String>(
                                       isExpanded: true,
@@ -488,16 +506,35 @@ class _ProfileScreen extends State<ProfileScreen> {
                                           .map((DatumCountry items) {
                                         return DropdownMenuItem<String>(
                                           value: items.countryName,
-                                          child: Text(
-                                            items.countryName!,
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? AppColors.colorWhite
-                                                  : AppColors.color4D4D4D,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16,
-                                              fontFamily: Fonts.interMedium,
-                                            ),
+                                          child: Row(
+                                            children: [
+                                              ClipOval(
+                                                child: Image.network(
+                                                  items.countryFlag ?? '',
+                                                  width: 24,
+                                                  height: 24,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context,
+                                                          error,
+                                                          stackTrace) =>
+                                                      Icon(Icons.flag),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                items.countryName!,
+                                                style: TextStyle(
+                                                  color: isDark
+                                                      ? AppColors.colorWhite
+                                                      : AppColors.color4D4D4D,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16,
+                                                  fontFamily: Fonts.interMedium,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         );
                                       }).toList(),
@@ -534,11 +571,40 @@ class _ProfileScreen extends State<ProfileScreen> {
                                         MaterialPageRoute(
                                             builder: (_) => SignUpScreen()));
                                   } else {
+                                    // Validation check
+                                    if (nameText.text.trim().isEmpty) {
+                                      Fluttertoast.showToast(
+                                          msg: "Please enter your name");
+                                      return;
+                                    }
+                                    if (ageText.text.trim().isEmpty) {
+                                      Fluttertoast.showToast(
+                                          msg: "Please enter your age");
+                                      return;
+                                    }
+                                    if (genderValue.isEmpty) {
+                                      Fluttertoast.showToast(
+                                          msg: "Please select your gender");
+                                      return;
+                                    }
+                                    if (countryInId == null) {
+                                      Fluttertoast.showToast(
+                                          msg: "Please select country in");
+                                      return;
+                                    }
+                                    if (countryBornId == null) {
+                                      Fluttertoast.showToast(
+                                          msg: "Please select country born");
+                                      return;
+                                    }
+                                    if (fileImage == null) {
+                                      Fluttertoast.showToast(
+                                          msg: "Please select profile image");
+                                      return;
+                                    }
                                     user = await HelperSaveData.helperSaveData
                                         .loadLoginUsers();
-                                    print("data login =======  " +
-                                        user!.data!.accessToken!.token
-                                            .toString());
+                                    print("data login =======  ${user!.data!.accessToken!.token}");
                                     tokenUser =
                                         user?.data?.accessToken?.token ?? '';
                                     getProfileUpdateApi();
@@ -626,9 +692,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   } else {
                                     user = await HelperSaveData.helperSaveData
                                         .loadLoginUsers();
-                                    print("data login =======  " +
-                                        user!.data!.accessToken!.token
-                                            .toString());
+                                    print("data login =======  ${user!.data!.accessToken!.token}");
                                     tokenUser =
                                         user?.data?.accessToken?.token ?? '';
                                     // Navigator.push(context, MaterialPageRoute(builder: (_)=>SetPasswordScreen()));

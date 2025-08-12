@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:bott/screens/LoginScreen.dart';
+import 'package:bott/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/LoginUserModel.dart';
+import '../model/login_user_model.dart';
 
 class HelperSaveData {
   HelperSaveData._();

@@ -1,19 +1,19 @@
-import 'package:bott/model/DashboardGetMovieModel.dart' hide Application, Type;
-import 'package:bott/model/FilterListModel.dart';
-import 'package:bott/screens/ProfileScreen.dart';
-import 'package:bott/utils/ImagePaths.dart';
-import 'package:bott/utils/TextView.dart';
+import 'package:bott/model/dashboard_get_movie_model.dart' hide Application, Type;
+import 'package:bott/model/filter_list_model.dart';
+import 'package:bott/screens/profile_screen.dart';
+import 'package:bott/utils/image_paths.dart';
+import 'package:bott/utils/text_view.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/LoginUserModel.dart';
-import '../provider/HomeProvider.dart';
-import '../utils/AppColors.dart';
-import '../utils/Fonts.dart';
-import '../utils/HelperSaveData.dart';
-import '../utils/UtilApi.dart';
+import '../model/login_user_model.dart';
+import '../provider/home_provider.dart';
+import '../utils/app_colors.dart';
+import '../utils/fonts_class.dart';
+import '../utils/helper_save_data.dart';
+import '../utils/util_api.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -589,9 +589,12 @@ class _HomeScreen extends State<HomeScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Dialog(
+              insetPadding: EdgeInsets.zero,
                 shadowColor: AppColors.colorTransparent,
+                backgroundColor: Colors.transparent,
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.8,
                   decoration: BoxDecoration(
                     color:

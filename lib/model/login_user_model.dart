@@ -33,7 +33,7 @@ class LoginUserModel {
 }
 
 class DataLogin {
-  User? user;
+  UserLogin? user;
   AccessToken? accessToken;
 
   DataLogin({
@@ -42,7 +42,7 @@ class DataLogin {
   });
 
   factory DataLogin.fromJson(Map<String, dynamic> json) => DataLogin(
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
+    user: json["user"] == null ? null : UserLogin.fromJson(json["user"]),
     accessToken: json["access_token"] == null ? null : AccessToken.fromJson(json["access_token"]),
   );
 
@@ -72,7 +72,7 @@ class AccessToken {
   };
 }
 
-class User {
+class UserLogin {
   int? id;
   String? role;
   dynamic firstName;
@@ -97,7 +97,7 @@ class User {
   DateTime? updatedAt;
   String? profileImageUrl;
 
-  User({
+  UserLogin({
     this.id,
     this.role,
     this.firstName,
@@ -123,7 +123,7 @@ class User {
     this.profileImageUrl,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory UserLogin.fromJson(Map<String, dynamic> json) => UserLogin(
     id: json["id"],
     role: json["role"],
     firstName: json["first_name"],

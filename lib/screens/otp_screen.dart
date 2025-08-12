@@ -1,16 +1,16 @@
-import 'package:bott/model/CommonModel.dart';
-import 'package:bott/screens/SetPasswordScreen.dart';
-import 'package:bott/utils/HelperSaveData.dart';
+import 'package:bott/model/common_model.dart';
+import 'package:bott/screens/set_password_screen.dart';
+import 'package:bott/utils/helper_save_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/LoginUserModel.dart';
-import '../utils/AppColors.dart';
-import '../utils/Fonts.dart';
-import '../utils/ImagePaths.dart';
-import '../utils/UserDataSave.dart';
-import '../utils/UtilApi.dart';
+import '../model/login_user_model.dart';
+import '../utils/app_colors.dart';
+import '../utils/fonts_class.dart';
+import '../utils/image_paths.dart';
+import '../utils/user_data_save.dart';
+import '../utils/util_api.dart';
 
 class OtpScreen extends StatefulWidget {
   final String emailGet;
@@ -37,7 +37,7 @@ class _OtpScreen extends State<OtpScreen> {
 
   void saveData() async {
     tokenUserGet = await HelperSaveData.helperSaveData.getStringValue(UserDataSave.token);
-    print("data login =======  " + tokenUserGet!);
+    print("data login =======  ${tokenUserGet!}");
   }
 
   late SharedPreferences pref;

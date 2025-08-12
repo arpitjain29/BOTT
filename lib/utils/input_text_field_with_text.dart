@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'AppColors.dart';
-import 'Fonts.dart';
+import 'app_colors.dart';
+import 'fonts_class.dart';
 
 class InputTextFieldWithText extends StatelessWidget {
   final String label;
   final String hintText;
-  // final String iconPath;
   final TextEditingController textController;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final bool obscureText;
+  final bool readOnly;
   final List<TextInputFormatter>? inputFormatters;
   final String whiteIcon;
   final String icon;
@@ -21,10 +21,10 @@ class InputTextFieldWithText extends StatelessWidget {
     required this.label,
     required this.hintText,
     required this.textController,
-    // required this.iconPath,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.obscureText = false,
+    this.readOnly = true,
     this.inputFormatters,
     required this.whiteIcon,
     required this.icon,
@@ -62,6 +62,7 @@ class InputTextFieldWithText extends StatelessWidget {
             borderRadius: BorderRadius.circular(30.0),
           ),
           child: TextField(
+            readOnly: readOnly,
             obscureText: obscureText,
             controller: textController,
             inputFormatters: inputFormatters,
@@ -90,7 +91,9 @@ class InputTextFieldWithText extends StatelessWidget {
               prefixIcon: Padding(
                 padding: const EdgeInsets.only(left: 15, right: 10),
                 child: Image.asset(
-                  Theme.of(context).brightness == Brightness.dark ? whiteIcon:icon,
+                  Theme.of(context).brightness == Brightness.dark
+                      ? whiteIcon
+                      : icon,
                   height: 20,
                   width: 20,
                   colorBlendMode: BlendMode.srcIn,

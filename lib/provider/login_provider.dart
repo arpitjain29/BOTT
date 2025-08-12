@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
-import '../model/ForgetPasswordModel.dart';
-import '../model/SignUpUserModel.dart';
-import '../utils/HelperSaveData.dart';
-import '../utils/UtilApi.dart';
+import '../model/forget_password_model.dart';
+import '../model/login_user_model.dart';
+import '../utils/helper_save_data.dart';
+import '../utils/util_api.dart';
 
-class SignUpProvider with ChangeNotifier {
+class LoginProvider with ChangeNotifier {
   bool _isLoading = false;
   bool _isLoadingGuest = false;
-  SignUpUserModel? _signUpUserModel;
+  LoginUserModel? _loginUserModel;
 
   bool get isLoading => _isLoading;
   bool get isLoadingGuest => _isLoadingGuest;
-  SignUpUserModel? get signUpUserModel => _signUpUserModel;
+  LoginUserModel? get loginUserModel => _loginUserModel;
 
   ForgetPasswordModel? _guestUserModel;
   ForgetPasswordModel? get guestUserModel => _guestUserModel;
 
-  Future<bool> signUp(String name, String email, String password) async {
+  Future<bool> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
 
-    _signUpUserModel = await UtilApi.getSignupMethod(name, email, password);
-    if(_signUpUserModel?.status == 200){
+    _loginUserModel = await UtilApi.getLoginMethod(email, password);
+    if(_loginUserModel?.status == 200){
       await HelperSaveData.helperSaveData.setBoolValue("isGuest", false);
     }
     _isLoading = false;
     notifyListeners();
 
-    return _signUpUserModel?.status == 200;
+    return _loginUserModel?.status == 200;
   }
 
   Future<bool> guestLogin() async {
@@ -53,7 +53,5 @@ class SignUpProvider with ChangeNotifier {
     return _guestUserModel?.status == 200;
   }
 
-  String? get message => _signUpUserModel?.message ?? _guestUserModel?.message;
-
-  // String? get message => _signUpUserModel?.message;
+  String? get message => _loginUserModel?.message ?? _guestUserModel?.message;
 }

@@ -1,18 +1,19 @@
-import 'package:bott/screens/LoginScreen.dart';
-import 'package:bott/utils/ImagePaths.dart';
-import 'package:bott/utils/InputValidator.dart';
+import 'package:bott/screens/login_screen.dart';
+import 'package:bott/utils/image_paths.dart';
+import 'package:bott/utils/input_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../provider/SignUpProvider.dart';
-import '../utils/AppColors.dart';
-import '../utils/Fonts.dart';
-import '../utils/InputTextFieldWithText.dart';
-import '../utils/TextView.dart';
-import '../utils/UserDataSave.dart';
-import 'HomeScreen.dart';
+import '../provider/sign_up_provider.dart';
+import '../utils/app_colors.dart';
+import '../utils/fonts_class.dart';
+import '../utils/google_auth_service.dart';
+import '../utils/input_text_field_with_text.dart';
+import '../utils/text_view.dart';
+import '../utils/user_data_save.dart';
+import 'home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -71,19 +72,20 @@ class _SignUpScreen extends State<SignUpScreen> {
                         height: 30,
                       ),
                       InputTextFieldWithText(
-                        label: "Username",
-                        hintText: "Enter your username",
-                        textController: nameText,
-                        icon: ImagePaths.user1,
-                        whiteIcon: ImagePaths.userWhite,
-                      ),
+                          label: "Username",
+                          hintText: "Enter your username",
+                          textController: nameText,
+                          icon: ImagePaths.user1,
+                          whiteIcon: ImagePaths.userWhite,
+                          readOnly: false),
                       InputTextFieldWithText(
                           label: "Email",
                           hintText: "Enter email",
                           textController: emailText,
                           icon: ImagePaths.email,
                           whiteIcon: "assets/image/ic_email_white.png",
-                          keyboardType: TextInputType.emailAddress),
+                          keyboardType: TextInputType.emailAddress,
+                          readOnly: false),
                       SizedBox(
                         height: 5,
                       ),
@@ -146,14 +148,13 @@ class _SignUpScreen extends State<SignUpScreen> {
                             ),
                             prefixIcon: Padding(
                               padding: EdgeInsets.only(left: 15),
-                                child: Image.asset(
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                      ? ImagePaths.passwordWhite
-                                      : ImagePaths.password,
-                                  height: 20,
-                                  width: 20,
-                                ),
+                              child: Image.asset(
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? ImagePaths.passwordWhite
+                                    : ImagePaths.password,
+                                height: 20,
+                                width: 20,
+                              ),
                             ),
                             suffixIcon: IconButton(
                               onPressed: () {
@@ -267,16 +268,12 @@ class _SignUpScreen extends State<SignUpScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: signupProvider.isLoading
                             ? Center(
-                                child: Container(
+                                child: SizedBox(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator()))
                             : ElevatedButton(
                                 onPressed: () async {
-                                  // Fluttertoast.showToast(
-                                  //     msg: "sign up api call",
-                                  //     toastLength: Toast.LENGTH_SHORT
-                                  // );
                                   if (InputValidator.validateSignUp(
                                       context: context,
                                       name: nameText.text,
@@ -341,10 +338,6 @@ class _SignUpScreen extends State<SignUpScreen> {
                                     child: CircularProgressIndicator()))
                             : ElevatedButton(
                                 onPressed: () async {
-                                  // Fluttertoast.showToast(
-                                  //     msg: "guest api call",
-                                  //     toastLength: Toast.LENGTH_SHORT
-                                  // );
                                   final signUpProvider =
                                       Provider.of<SignUpProvider>(context,
                                           listen: false);
@@ -410,12 +403,19 @@ class _SignUpScreen extends State<SignUpScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Image.asset(ImagePaths.circleApple),
-                                  Image.asset(ImagePaths.google),
-                                ],
+                              child: InkWell(
+                                onTap: () async {
+                                  final googleAuthService = GoogleAuthService();
+                                  await googleAuthService
+                                      .signInWithGoogle(context);
+                                },
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Image.asset(ImagePaths.circleApple),
+                                    Image.asset(ImagePaths.google),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

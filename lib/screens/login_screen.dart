@@ -1,20 +1,21 @@
-import 'package:bott/screens/HomeScreen.dart';
-import 'package:bott/screens/ResetPassword.dart';
-import 'package:bott/screens/SignUpScreen.dart';
-import 'package:bott/utils/Fonts.dart';
-import 'package:bott/utils/ImagePaths.dart';
-import 'package:bott/utils/InputValidator.dart';
-import 'package:bott/utils/TextView.dart';
-import 'package:bott/utils/UserDataSave.dart';
+import 'package:bott/screens/home_screen.dart';
+import 'package:bott/screens/reset_password.dart';
+import 'package:bott/screens/sign_up_screen.dart';
+import 'package:bott/utils/fonts_class.dart';
+import 'package:bott/utils/image_paths.dart';
+import 'package:bott/utils/input_validator.dart';
+import 'package:bott/utils/text_view.dart';
+import 'package:bott/utils/user_data_save.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../provider/LoginProvider.dart';
-import '../utils/AppColors.dart';
-import '../utils/HelperSaveData.dart';
-import '../utils/InputTextFieldWithText.dart';
+import '../provider/login_provider.dart';
+import '../utils/app_colors.dart';
+import '../utils/google_auth_service.dart';
+import '../utils/helper_save_data.dart';
+import '../utils/input_text_field_with_text.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -90,7 +91,9 @@ class _LoginScreen extends State<LoginScreen> {
                             textController: emailText,
                             whiteIcon: "assets/image/ic_email_white.png",
                             icon: ImagePaths.email,
-                            keyboardType: TextInputType.emailAddress),
+                            keyboardType: TextInputType.emailAddress,
+                          readOnly: false,
+                        ),
                         Container(
                           height: 5,
                         ),
@@ -336,12 +339,18 @@ class _LoginScreen extends State<LoginScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Image.asset(ImagePaths.circleApple),
-                                    Image.asset(ImagePaths.google),
-                                  ],
+                                child: InkWell(
+                                  onTap: () async {
+                                    final googleAuthService = GoogleAuthService();
+                                    await googleAuthService.signInWithGoogle(context);
+                                  },
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Image.asset(ImagePaths.circleApple),
+                                      Image.asset(ImagePaths.google),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],

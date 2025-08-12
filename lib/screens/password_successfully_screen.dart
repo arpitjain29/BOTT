@@ -1,7 +1,6 @@
-import 'package:bott/screens/LoginScreen.dart';
-import 'package:bott/utils/ImagePaths.dart';
+import 'package:bott/screens/login_screen.dart';
+import 'package:bott/utils/image_paths.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class PasswordSuccessfullyScreen extends StatefulWidget {
   const PasswordSuccessfullyScreen({super.key});

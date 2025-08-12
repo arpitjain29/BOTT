@@ -1,4 +1,3 @@
-
 class ImagePaths{
   static const String appLogo = "assets/image/ic_app_logo.png";
   static const String appLogoHome = "assets/image/ic_logo_home.png";

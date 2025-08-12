@@ -1,15 +1,15 @@
-import 'package:bott/model/ForgetPasswordModel.dart';
-import 'package:bott/screens/OtpScreen.dart';
-import 'package:bott/utils/HelperSaveData.dart';
-import 'package:bott/utils/UserDataSave.dart';
+import 'package:bott/model/forget_password_model.dart';
+import 'package:bott/screens/otp_screen.dart';
+import 'package:bott/utils/helper_save_data.dart';
+import 'package:bott/utils/user_data_save.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utils/Fonts.dart';
-import '../utils/ImagePaths.dart';
-import '../utils/InputTextFieldWithText.dart';
-import '../utils/UtilApi.dart';
+import '../utils/fonts_class.dart';
+import '../utils/image_paths.dart';
+import '../utils/input_text_field_with_text.dart';
+import '../utils/util_api.dart';
 
 class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
@@ -87,12 +87,10 @@ class _ResetPassword extends State<ResetPassword> {
           Column(
             children: [
               Expanded(
-                child: Container(
-                  child: Image.asset(
-                    Theme.of(context).brightness == Brightness.dark
-                        ? ImagePaths.appLogoDark
-                        : ImagePaths.appLogo,
-                  ),
+                child: Image.asset(
+                  Theme.of(context).brightness == Brightness.dark
+                      ? ImagePaths.appLogoDark
+                      : ImagePaths.appLogo,
                 ),
               ),
               Container(
@@ -127,7 +125,7 @@ class _ResetPassword extends State<ResetPassword> {
                           textController: emailText,
                           icon: ImagePaths.email,
                           whiteIcon: "assets/image/ic_email_white.png",
-                          keyboardType: TextInputType.emailAddress),
+                          keyboardType: TextInputType.emailAddress,readOnly: false,),
                       Container(
                         margin: EdgeInsets.symmetric(vertical: 20),
                         width: MediaQuery.of(context).size.width,

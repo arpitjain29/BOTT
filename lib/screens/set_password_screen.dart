@@ -1,16 +1,16 @@
-import 'package:bott/screens/PasswordSuccessfullyScreen.dart';
+import 'package:bott/screens/password_successfully_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/CommonModel.dart';
-import '../utils/AppColors.dart';
-import '../utils/Fonts.dart';
-import '../utils/HelperSaveData.dart';
-import '../utils/ImagePaths.dart';
-import '../utils/UserDataSave.dart';
-import '../utils/UtilApi.dart';
+import '../model/common_model.dart';
+import '../utils/app_colors.dart';
+import '../utils/fonts_class.dart';
+import '../utils/helper_save_data.dart';
+import '../utils/image_paths.dart';
+import '../utils/user_data_save.dart';
+import '../utils/util_api.dart';
 
 class SetPasswordScreen extends StatefulWidget {
   const SetPasswordScreen({super.key});

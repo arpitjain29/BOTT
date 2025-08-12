@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:bott/model/CommonModel.dart';
-import 'package:bott/model/CountryModel.dart';
-import 'package:bott/model/DashboardGetMovieModel.dart';
-import 'package:bott/model/FilterListModel.dart';
-import 'package:bott/model/ForgetPasswordModel.dart';
-import 'package:bott/model/LoginUserModel.dart';
-import 'package:bott/model/ProfileModel.dart';
-import 'package:bott/model/SignUpUserModel.dart';
+import 'package:bott/model/common_model.dart';
+import 'package:bott/model/country_model.dart';
+import 'package:bott/model/dashboard_get_movie_model.dart';
+import 'package:bott/model/filter_list_model.dart';
+import 'package:bott/model/forget_password_model.dart';
+import 'package:bott/model/login_user_model.dart';
+import 'package:bott/model/profile_model.dart';
+import 'package:bott/model/sign_up_user_model.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +21,7 @@ import 'dart:async';
 
 import 'package:path_provider/path_provider.dart';
 
-import 'HelperSaveData.dart';
+import 'helper_save_data.dart';
 
 class UtilApi {
   static Future<bool> checkNetwork() async {
@@ -34,6 +35,18 @@ class UtilApi {
       isConnected = false;
     }
     return isConnected;
+  }
+
+  static String getPlatformName() {
+    if (kIsWeb) {
+      return "web";
+    } else if (Platform.isAndroid) {
+      return "android";
+    } else if (Platform.isIOS) {
+      return "ios";
+    } else {
+      return "unknown";
+    }
   }
 
   static Future<File> urlToFile(String imageUrl) async {
@@ -62,6 +75,9 @@ class UtilApi {
 
   static Future<LoginUserModel?> getLoginMethod(
       String email, String password) async {
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    print("FCM Token: $fcmToken");
+    final platformName = getPlatformName();
     // Check internet before proceeding
     bool isConnected = await checkNetwork();
     if (!isConnected) {
@@ -75,8 +91,8 @@ class UtilApi {
     Map params = {
       "email": email,
       "password": password,
-      "device_token": "1234",
-      "device_type": "android"
+      "device_token": fcmToken,
+      "device_type": platformName
     };
     var body = jsonEncode(params);
     http.Response response = await http.post(Uri.parse(loginApi),
@@ -165,6 +181,8 @@ class UtilApi {
 
   static Future<SignUpUserModel?> getSignupMethod(
       String userName, String email, String password) async {
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    final platformName = getPlatformName();
     // Check internet before proceeding
     bool isConnected = await checkNetwork();
     if (!isConnected) {
@@ -179,8 +197,8 @@ class UtilApi {
       "username": userName,
       "email": email,
       "password": password,
-      "device_token": "1234",
-      "device_type": "android"
+      "device_token": fcmToken,
+      "device_type": platformName
     };
     var body = jsonEncode(params);
     http.Response response = await http.post(Uri.parse(signupApi),
@@ -189,29 +207,28 @@ class UtilApi {
       print('sign up body >>>>>>$body');
       print('sign up response >>>>>${response.body}');
     }
+    var data = jsonDecode(response.body);
+    SignUpUserModel user = SignUpUserModel.fromJson(data);
+
+    if (data is Map && data.containsKey("error")) {
+      Fluttertoast.showToast(msg: data["error"]);
+      return null; // stop here
+    }
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      SignUpUserModel user = SignUpUserModel.fromJson(data);
       return user;
     } else if (response.statusCode == 400) {
-      var data = jsonDecode(response.body);
-      SignUpUserModel user = SignUpUserModel.fromJson(data);
       Fluttertoast.showToast(
           msg: user.message!,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
       return user;
     } else if (response.statusCode == 401) {
-      var data = jsonDecode(response.body);
-      SignUpUserModel user = SignUpUserModel.fromJson(data);
       Fluttertoast.showToast(
           msg: user.message!,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
       return user;
     } else {
-      var data = jsonDecode(response.body);
-      SignUpUserModel user = SignUpUserModel.fromJson(data);
       Fluttertoast.showToast(
           msg: user.message!,
           toastLength: Toast.LENGTH_SHORT,
@@ -437,7 +454,7 @@ class UtilApi {
     http.Response response = await http.post(Uri.parse(resetPasswordApi),
         headers: {
           "Content-Type": "application/json",
-          'Authorization': "Bearer $token",
+          'Authorization': "Bearer $token"
         },
         body: body);
     if (kDebugMode) {
@@ -676,7 +693,7 @@ class UtilApi {
     }
     http.Response response = await http.post(Uri.parse(logoutApi), headers: {
       "Content-Type": "application/json",
-      'Authorization': "Bearer $token",
+      'Authorization': "Bearer $token"
     });
     if (kDebugMode) {
       print('logout response >>>>>${response.body}');

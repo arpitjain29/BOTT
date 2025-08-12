@@ -1,21 +1,24 @@
 import 'dart:async';
 
-import 'package:bott/provider/HomeProvider.dart';
-import 'package:bott/provider/LoginProvider.dart';
-import 'package:bott/provider/SignUpProvider.dart';
-import 'package:bott/screens/HomeScreen.dart';
-import 'package:bott/themes/Themes.dart';
-import 'package:bott/screens/LoginScreen.dart';
-import 'package:bott/utils/ImagePaths.dart';
+import 'package:bott/provider/home_provider.dart';
+import 'package:bott/provider/login_provider.dart';
+import 'package:bott/provider/sign_up_provider.dart';
+import 'package:bott/screens/home_screen.dart';
+import 'package:bott/themes/theme_class.dart';
+import 'package:bott/screens/login_screen.dart';
+import 'package:bott/utils/image_paths.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bott/utils/HelperSaveData.dart';
+import 'package:bott/utils/helper_save_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'models/ThemeNotifier.dart';
+import 'models/theme_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await HelperSaveData.helperSaveData.initSharedPreferences();
   runApp(
     MultiProvider(
@@ -84,6 +87,25 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     checkLogin();
+    getFirebaseToken();
+  }
+
+  Future<void> getFirebaseToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Request permission for iOS
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      String? token = await messaging.getToken();
+      print("FCM Token: $token");
+    } else {
+      print("User declined or has not accepted permission");
+    }
   }
 
   @override

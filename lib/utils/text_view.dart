@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Fonts.dart';
+import 'fonts_class.dart';
 
 class TextView extends StatelessWidget {
   final String label;

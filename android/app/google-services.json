@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "884617994155",
+    "project_id": "bott-9c461",
+    "storage_bucket": "bott-9c461.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884617994155:android:420be34bda8e057bb6fcee",
+        "android_client_info": {
+          "package_name": "com.example.bott"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpxdyCIhzW_VNtITmwKXj6-S5Lpa9O7J0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
