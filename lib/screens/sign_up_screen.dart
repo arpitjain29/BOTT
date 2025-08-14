@@ -290,13 +290,14 @@ class _SignUpScreen extends State<SignUpScreen> {
                                       emailText.text,
                                       passwordText.text,
                                     );
-
+                                    if (!context.mounted) return;
                                     if (success) {
                                       Fluttertoast.showToast(
                                         msg: signUpProvider.message ??
                                             "Signup successful",
                                         toastLength: Toast.LENGTH_SHORT,
                                       );
+                                      if (!context.mounted) return;
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -344,7 +345,7 @@ class _SignUpScreen extends State<SignUpScreen> {
 
                                   bool success =
                                       await signUpProvider.guestLogin();
-
+                                  if (!context.mounted) return;
                                   if (success) {
                                     SharedPreferences pref =
                                         await SharedPreferences.getInstance();
@@ -353,6 +354,7 @@ class _SignUpScreen extends State<SignUpScreen> {
                                         signUpProvider.guestUserModel?.data
                                                 ?.accessToken?.token ??
                                             "");
+                                    if (!context.mounted) return;
                                     // Navigate to home or another screen
                                     Navigator.pushReplacement(
                                         context,

@@ -62,7 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void checkLogin() async {
     pref = await SharedPreferences.getInstance();
     bool? checkLogin = pref.getBool("isLoginUser");
+    bool? checkLoginGoogle = pref.getBool("isLoginUserGoogle");
     print("login user======== $checkLogin");
+    print("login user google ======== $checkLoginGoogle");
     bool isGuest = await HelperSaveData.helperSaveData.getBoolValue("isGuest") ?? false;
     if (isGuest) {
       // Navigate to Home directly
@@ -70,6 +72,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     if(checkLogin == true){
+      Timer(
+          Duration(seconds: 3),
+              () => Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => HomeScreen())));
+    } else if(checkLoginGoogle == true){
       Timer(
           Duration(seconds: 3),
               () => Navigator.pushReplacement(

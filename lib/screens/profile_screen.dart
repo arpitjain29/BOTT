@@ -7,6 +7,7 @@ import 'package:bott/utils/image_paths.dart';
 import 'package:bott/utils/input_text_field_with_text.dart';
 import 'package:bott/utils/text_view.dart';
 import 'package:bott/utils/user_data_save.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,18 +48,29 @@ class _ProfileScreen extends State<ProfileScreen> {
   String? tokenUser;
   SharedPreferences? pref;
   bool? isGuest;
+  bool? isGoogleLogin;
 
   void saveData() async {
     pref = await SharedPreferences.getInstance();
     isGuest =
         await HelperSaveData.helperSaveData.getBoolValue("isGuest") ?? false;
+    isGoogleLogin =
+        await HelperSaveData.helperSaveData.getBoolValue("isLoginUserGoogle") ??
+            false;
     if (isGuest!) {
-      print("login user isGuest ======== $isGuest");
+      if (kDebugMode) {
+        print("login user isGuest ======== $isGuest");
+      }
       tokenUser = pref?.getString(UserDataSave.token);
     } else {
       user = await HelperSaveData.helperSaveData.loadLoginUsers();
-      print("data login =======  ${user!.data!.accessToken!.token}");
+      if (kDebugMode) {
+        print("data login =======  ${user!.data!.accessToken!.token}");
+      }
       tokenUser = user?.data?.accessToken?.token ?? '';
+      if (isGoogleLogin!) {
+        tokenUser = pref?.getString(UserDataSave.token);
+      }
     }
     getProfileApi();
   }
@@ -69,8 +81,6 @@ class _ProfileScreen extends State<ProfileScreen> {
 
   List<DatumCountry> dataList = [];
   String countryName = "";
-  var selectCountryId;
-  var selectCountryIdBorn;
 
   String countryNameYou = 'Country you are in';
   String countryNameBorn = 'Country you are born in';
@@ -109,11 +119,12 @@ class _ProfileScreen extends State<ProfileScreen> {
 
   void getProfileApi() async {
     pref = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       clickLoad = true;
     });
     profileModel = await UtilApi.getProfileApiMethod(tokenUser!, context);
-
+    if (!mounted) return;
     if (profileModel!.status == 200) {
       setState(() {
         nameText.text = profileModel?.data?.username ?? "";
@@ -146,9 +157,11 @@ class _ProfileScreen extends State<ProfileScreen> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
-    setState(() {
-      clickLoad = false;
-    });
+    if (!mounted) {
+      setState(() {
+        clickLoad = false;
+      });
+    }
   }
 
   File? fileImage;
@@ -206,6 +219,7 @@ class _ProfileScreen extends State<ProfileScreen> {
 
   void getProfileUpdateApi() async {
     pref = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       clickLoad = true;
     });
@@ -217,14 +231,16 @@ class _ProfileScreen extends State<ProfileScreen> {
         countryBornId.toString(),
         fileImage!,
         tokenUser!);
-
+    if (!mounted) return;
     if (profileModel!.status == 200) {
       Fluttertoast.showToast(
           msg: profileModel!.message!,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
+      if (!mounted) return;
       final homeProvider = Provider.of<HomeProvider>(context, listen: false);
       await homeProvider.fetchProfile(context);
+      if (!mounted) return;
       setState(() {
         getProfileApi();
       });
@@ -235,9 +251,11 @@ class _ProfileScreen extends State<ProfileScreen> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
-    setState(() {
-      clickLoad = false;
-    });
+    if (!mounted) {
+      setState(() {
+        clickLoad = false;
+      });
+    }
   }
 
   @override
@@ -403,11 +421,6 @@ class _ProfileScreen extends State<ProfileScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  // Container(
-                                  //   margin:
-                                  //       EdgeInsets.symmetric(horizontal: 10),
-                                  //   child: Image.asset(ImagePaths.countryIndia),
-                                  // ),
                                   Expanded(
                                     child: DropdownButton<String>(
                                       isExpanded: true,
@@ -514,8 +527,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                                   width: 24,
                                                   height: 24,
                                                   fit: BoxFit.cover,
-                                                  errorBuilder: (context,
-                                                          error,
+                                                  errorBuilder: (context, error,
                                                           stackTrace) =>
                                                       Icon(Icons.flag),
                                                 ),
@@ -558,8 +570,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                               child: ElevatedButton(
                                 onPressed: () async {
                                   if (isGuest!) {
-                                    print(
-                                        "login user isGuest ======== $isGuest");
+                                    if (kDebugMode) {
+                                      print(
+                                          "login user isGuest ======== $isGuest");
+                                    }
                                     Fluttertoast.showToast(
                                         msg: "Please signup",
                                         toastLength: Toast.LENGTH_SHORT,
@@ -602,11 +616,14 @@ class _ProfileScreen extends State<ProfileScreen> {
                                           msg: "Please select profile image");
                                       return;
                                     }
-                                    user = await HelperSaveData.helperSaveData
-                                        .loadLoginUsers();
-                                    print("data login =======  ${user!.data!.accessToken!.token}");
-                                    tokenUser =
-                                        user?.data?.accessToken?.token ?? '';
+                                    user = await HelperSaveData.helperSaveData.loadLoginUsers();
+                                    if (kDebugMode) {
+                                      print("data login =======  ${user!.data!.accessToken!.token}");
+                                    }
+                                    tokenUser = user?.data?.accessToken?.token ?? '';
+                                    if (isGoogleLogin!) {
+                                      tokenUser = pref?.getString(UserDataSave.token);
+                                    }
                                     getProfileUpdateApi();
                                   }
                                 },
@@ -631,7 +648,24 @@ class _ProfileScreen extends State<ProfileScreen> {
                               margin: EdgeInsets.symmetric(vertical: 15),
                               width: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  if (isGuest!) {
+                                    if (kDebugMode) {
+                                      print(
+                                          "login user isGuest ======== $isGuest");
+                                    }
+                                    Fluttertoast.showToast(
+                                        msg: "Please signup",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.SNACKBAR);
+                                    tokenUser =
+                                        pref?.getString(UserDataSave.token);
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => SignUpScreen()));
+                                  }
+                                },
                                 child: Container(
                                   alignment: Alignment.topLeft,
                                   margin: EdgeInsets.symmetric(
@@ -653,7 +687,24 @@ class _ProfileScreen extends State<ProfileScreen> {
                               margin: EdgeInsets.symmetric(vertical: 15),
                               width: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  if (isGuest!) {
+                                    if (kDebugMode) {
+                                      print(
+                                          "login user isGuest ======== $isGuest");
+                                    }
+                                    Fluttertoast.showToast(
+                                        msg: "Please signup",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.SNACKBAR);
+                                    tokenUser =
+                                        pref?.getString(UserDataSave.token);
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => SignUpScreen()));
+                                  }
+                                },
                                 child: Container(
                                   alignment: Alignment.topLeft,
                                   margin: EdgeInsets.symmetric(
@@ -677,8 +728,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                               child: ElevatedButton(
                                 onPressed: () async {
                                   if (isGuest!) {
-                                    print(
-                                        "login user isGuest ======== $isGuest");
+                                    if (kDebugMode) {
+                                      print(
+                                          "login user isGuest ======== $isGuest");
+                                    }
                                     tokenUser =
                                         pref?.getString(UserDataSave.token);
                                     Fluttertoast.showToast(
@@ -692,9 +745,15 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   } else {
                                     user = await HelperSaveData.helperSaveData
                                         .loadLoginUsers();
-                                    print("data login =======  ${user!.data!.accessToken!.token}");
+                                    if (kDebugMode) {
+                                      print(
+                                          "data login =======  ${user!.data!.accessToken!.token}");
+                                    }
                                     tokenUser =
                                         user?.data?.accessToken?.token ?? '';
+                                    tokenUser =
+                                        pref?.getString(UserDataSave.token) ??
+                                            "";
                                     // Navigator.push(context, MaterialPageRoute(builder: (_)=>SetPasswordScreen()));
                                   }
                                 },

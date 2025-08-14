@@ -1,6 +1,7 @@
 import 'package:bott/model/common_model.dart';
 import 'package:bott/screens/set_password_screen.dart';
 import 'package:bott/utils/helper_save_data.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +38,9 @@ class _OtpScreen extends State<OtpScreen> {
 
   void saveData() async {
     tokenUserGet = await HelperSaveData.helperSaveData.getStringValue(UserDataSave.token);
-    print("data login =======  ${tokenUserGet!}");
+    if (kDebugMode) {
+      print("data login =======  ${tokenUserGet!}");
+    }
   }
 
   late SharedPreferences pref;
@@ -55,18 +58,19 @@ class _OtpScreen extends State<OtpScreen> {
     }
 
     pref = await SharedPreferences.getInstance();
-
+    if (!mounted) return;
     setState(() {
       clickLoad = true;
     });
     loginUserModel = await UtilApi.getVerifyOtpMethod(
         widget.emailGet, otptext, tokenUserGet!);
-
+    if (!mounted) return;
     if (loginUserModel!.status == 200) {
       Fluttertoast.showToast(
           msg: loginUserModel!.message!,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
+      if (!mounted) return;
       Navigator.push(
           context, MaterialPageRoute(builder: (_) => SetPasswordScreen()));
     } else {
@@ -75,9 +79,11 @@ class _OtpScreen extends State<OtpScreen> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
-    setState(() {
+    if (!mounted) {
+      setState(() {
       clickLoad = false;
     });
+    }
   }
 
   void verifyOtpApi() async {

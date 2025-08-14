@@ -71,17 +71,19 @@ class _SetPasswordScreen extends State<SetPasswordScreen> {
 
   void resetPasswordApi() async {
     pref = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       clickLoad = true;
     });
     commonModel =
         await UtilApi.getResetPasswordMethod(passwordText.text, tokenUserGet!);
-
+    if (!mounted) return;
     if (commonModel!.status == 200) {
       Fluttertoast.showToast(
           msg: commonModel!.message!,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
+      if (!mounted) return;
       Navigator.push(context,
           MaterialPageRoute(builder: (_) => PasswordSuccessfullyScreen()));
     } else {
@@ -90,9 +92,11 @@ class _SetPasswordScreen extends State<SetPasswordScreen> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
-    setState(() {
+    if (!mounted) {
+      setState(() {
       clickLoad = false;
     });
+    }
   }
 
   @override

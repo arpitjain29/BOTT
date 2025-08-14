@@ -215,7 +215,7 @@ class _LoginScreen extends State<LoginScreen> {
                                         password: passwordText.text)) {
                                       final success = await loginProvider.login(
                                           emailText.text, passwordText.text);
-
+                                      if (!context.mounted) return;
                                       if (success) {
                                         Fluttertoast.showToast(
                                           msg: loginProvider.message ??
@@ -232,7 +232,7 @@ class _LoginScreen extends State<LoginScreen> {
                                             .saveLoginUsers(
                                                 loginProvider.loginUserModel);
                                         pref.setBool("isLoginUser", true);
-
+                                        if (!context.mounted) return;
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
@@ -281,7 +281,7 @@ class _LoginScreen extends State<LoginScreen> {
 
                                     bool success =
                                         await loginProvider.guestLogin();
-
+                                    if (!context.mounted) return;
                                     if (success) {
                                       SharedPreferences pref =
                                           await SharedPreferences.getInstance();
@@ -290,6 +290,7 @@ class _LoginScreen extends State<LoginScreen> {
                                           loginProvider.guestUserModel?.data
                                                   ?.accessToken?.token ??
                                               "");
+                                      if (!context.mounted) return;
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(

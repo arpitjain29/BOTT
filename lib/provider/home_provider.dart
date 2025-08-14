@@ -1,5 +1,6 @@
 import 'package:bott/utils/user_data_save.dart';
 import 'package:bott/utils/util_api.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/dashboard_get_movie_model.dart';
 import '../model/login_user_model.dart';
 import '../model/profile_model.dart';
+import '../utils/google_auth_service.dart';
 import '../utils/helper_save_data.dart';
 
 class HomeProvider extends ChangeNotifier {
@@ -30,29 +32,22 @@ class HomeProvider extends ChangeNotifier {
   }
 
   String selectedCategory = "";
-  Map<String, String> _activeFilters = {}; // <-- New filter map
+  Map<String, String> _activeFilters = {};
 
   void selectCategory(String category) {
     selectedCategory = category;
     notifyListeners();
   }
 
-  // void submitFilter(Map<String, String> filters) {
-  //   // Send to API using http/dio
-  //   print("Sending selected IDs to API: $filters");
-  //
-  //   // Example API call:
-  //   // ApiService.sendFilterData({"ids": selectedIds});
-  // }
-
   void submitFilter(Map<String, String> filters, BuildContext context) {
     _activeFilters = filters;
-    print("Sending selected IDs to API: $_activeFilters");
+    if (kDebugMode) {
+      print("Sending selected IDs to API: $_activeFilters");
+    }
     fetchMovies(context);
   }
 
   void resetFilters(BuildContext context) {
-    // selectedFilters.clear();
     _activeFilters.clear();
     fetchMovies(context);
   }
@@ -82,14 +77,24 @@ class HomeProvider extends ChangeNotifier {
 
       bool isGuest =
           await HelperSaveData.helperSaveData.getBoolValue("isGuest") ?? false;
+      bool isGoogleLogin = await HelperSaveData.helperSaveData
+              .getBoolValue("isLoginUserGoogle") ??
+          false;
       if (isGuest) {
-        print("login user isGuest ======== $isGuest");
+        if (kDebugMode) {
+          print("login user isGuest ======== $isGuest");
+        }
         token = pref?.getString(UserDataSave.token);
       } else {
         token = user?.data?.accessToken?.token ?? '';
+        if (isGoogleLogin) {
+          token = pref?.getString(UserDataSave.token);
+        }
       }
 
-      print("token ======== $token");
+      if (kDebugMode) {
+        print("token ======== $token");
+      }
 
       if (token!.isNotEmpty) {
         final result = await UtilApi.getMoviesListMethod(
@@ -196,10 +201,16 @@ class HomeProvider extends ChangeNotifier {
 
       bool isGuest =
           await HelperSaveData.helperSaveData.getBoolValue("isGuest") ?? false;
+      bool isGoogleLogin = await HelperSaveData.helperSaveData
+              .getBoolValue("isLoginUserGoogle") ??
+          false;
       if (isGuest) {
         token = pref?.getString(UserDataSave.token);
       } else {
         token = user?.data?.accessToken?.token ?? '';
+        if (isGoogleLogin) {
+          token = pref?.getString(UserDataSave.token);
+        }
       }
 
       if (token!.isNotEmpty) {
@@ -243,10 +254,16 @@ class HomeProvider extends ChangeNotifier {
 
       bool isGuest =
           await HelperSaveData.helperSaveData.getBoolValue("isGuest") ?? false;
+      bool isGoogleLogin = await HelperSaveData.helperSaveData
+              .getBoolValue("isLoginUserGoogle") ??
+          false;
       if (isGuest) {
         token = pref?.getString(UserDataSave.token);
       } else {
         token = user?.data?.accessToken?.token ?? '';
+        if (isGoogleLogin) {
+          token = pref?.getString(UserDataSave.token);
+        }
       }
 
       if (token!.isNotEmpty) {
@@ -257,9 +274,14 @@ class HomeProvider extends ChangeNotifier {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
           );
-
+          if (isGoogleLogin) {
+            // Google logout
+            await GoogleAuthService().signOut();
+          }
           // Clear saved login data
           await HelperSaveData.helperSaveData.logout(context);
+          final googleAuthService = GoogleAuthService();
+          await googleAuthService.signOut();
         } else {
           Fluttertoast.showToast(
             msg: result?.message ?? "Logout failed",

@@ -45,14 +45,16 @@ class _ResetPassword extends State<ResetPassword> {
   void forgetPasswordApi() async {
     await HelperSaveData.helperSaveData.initSharedPreferences();
     pref = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       clickLoad = true;
     });
     forgetPasswordModel = await UtilApi.getForgetPasswordMethod(emailText.text);
-
+    if (!mounted) return;
     if (forgetPasswordModel!.status == 200) {
       HelperSaveData.helperSaveData.setStringValue(UserDataSave.token,
           forgetPasswordModel?.data?.accessToken?.token.toString() ?? "");
+      if (!mounted) return;
       Navigator.push(context,
           MaterialPageRoute(builder: (_) => OtpScreen(emailText.text)));
     } else {
@@ -61,9 +63,11 @@ class _ResetPassword extends State<ResetPassword> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.SNACKBAR);
     }
-    setState(() {
-      clickLoad = false;
-    });
+    if (!mounted) {
+      setState(() {
+        clickLoad = false;
+      });
+    }
   }
 
   @override
@@ -120,12 +124,14 @@ class _ResetPassword extends State<ResetPassword> {
                         ),
                       ),
                       InputTextFieldWithText(
-                          label: "Email",
-                          hintText: "Enter Your Email",
-                          textController: emailText,
-                          icon: ImagePaths.email,
-                          whiteIcon: "assets/image/ic_email_white.png",
-                          keyboardType: TextInputType.emailAddress,readOnly: false,),
+                        label: "Email",
+                        hintText: "Enter Your Email",
+                        textController: emailText,
+                        icon: ImagePaths.email,
+                        whiteIcon: "assets/image/ic_email_white.png",
+                        keyboardType: TextInputType.emailAddress,
+                        readOnly: false,
+                      ),
                       Container(
                         margin: EdgeInsets.symmetric(vertical: 20),
                         width: MediaQuery.of(context).size.width,

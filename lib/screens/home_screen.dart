@@ -1,8 +1,11 @@
-import 'package:bott/model/dashboard_get_movie_model.dart' hide Application, Type;
+import 'package:bott/model/dashboard_get_movie_model.dart'
+    hide Application, Type;
 import 'package:bott/model/filter_list_model.dart';
 import 'package:bott/screens/profile_screen.dart';
+import 'package:bott/screens/sign_up_screen.dart';
 import 'package:bott/utils/image_paths.dart';
 import 'package:bott/utils/text_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +15,7 @@ import '../model/login_user_model.dart';
 import '../provider/home_provider.dart';
 import '../utils/app_colors.dart';
 import '../utils/fonts_class.dart';
+import '../utils/google_auth_service.dart';
 import '../utils/helper_save_data.dart';
 import '../utils/util_api.dart';
 
@@ -89,8 +93,10 @@ class _HomeScreen extends State<HomeScreen> {
     filterListModel = await UtilApi.getFilterListMethod();
 
     if (filterListModel!.status == "200") {
-      print(
-          "filter data application name ========== ${filterListModel!.data!.applications![0].name}");
+      if (kDebugMode) {
+        print(
+            "filter data application name ========== ${filterListModel!.data!.applications![0].name}");
+      }
     } else {
       Fluttertoast.showToast(
           msg: filterListModel!.message!,
@@ -115,461 +121,553 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   void _showAlertDialog(BuildContext context, DatumMovieList? listData) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          shadowColor: AppColors.colorTransparent,
-          child: Container(
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.color1F2437 : AppColors.colorWhite,
-              border: Border.all(
-                  color: isDark ? AppColors.color313A5A : Colors.black,
-                  width: 1.0,
-                  style: BorderStyle.solid),
-            ),
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: FadeInImage.assetNetwork(
-                            height: MediaQuery.of(context).size.height / 3,
-                            width: MediaQuery.of(context).size.width,
+        bool selectWatchList = false;
+        bool selectInterested = false;
+        bool selectSeen = false;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return StatefulBuilder(builder: (context, setState) {
+          return Dialog(
+            shadowColor: AppColors.colorTransparent,
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.color1F2437 : AppColors.colorWhite,
+                border: Border.all(
+                    color: isDark ? AppColors.color313A5A : Colors.black,
+                    width: 1.0,
+                    style: BorderStyle.solid),
+              ),
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          FadeInImage.assetNetwork(
+                            height: 230,
+                            width: 120,
                             fit: BoxFit.fill,
                             placeholder: ImagePaths.noImage,
                             image: listData?.images?.image ?? "",
                             imageErrorBuilder: (context, error, stack) {
                               return Image.asset(
+                                height: 230,
+                                width: 120,
                                 fit: BoxFit.fill,
                                 ImagePaths.noImage,
                               );
                             },
                           ),
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.only(left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                    Row(
+                                      children: [
+                                        Expanded(child:
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              listData?.origin ?? "",
+                                              style: TextStyle(
+                                                  color: isDark
+                                                      ? AppColors.color96A4C3
+                                                      : AppColors.colorGrey,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      Fonts.metropolisRegular),
+                                            ),
+                                            Text(
+                                              listData?.name ?? "",
+                                              style: TextStyle(
+                                                  color: isDark
+                                                      ? AppColors.colorWhite
+                                                      : AppColors.colorGrey,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20,
+                                                  fontFamily:
+                                                      Fonts.metropolisSemiBold),
+                                            ),
+                                            Text(
+                                              listData?.genreName ?? "",
+                                              style: TextStyle(
+                                                  color: isDark
+                                                      ? AppColors.color96A4C3
+                                                      : AppColors.colorGrey,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      Fonts.metropolisRegular),
+                                            ),
+                                          ],
+                                        ),),
+                                        Container(
+                                          alignment: Alignment.topRight,
+                                          padding: EdgeInsets.only(
+                                              top: 10,
+                                              bottom: 10,
+                                              right: 10,
+                                              left: 27),
+                                          margin: EdgeInsets.only(top: 10),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            border: Border.all(
+                                              color: AppColors.colorE8A818,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              bottomLeft: Radius.circular(20),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "${listData?.bottScore}%",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.dark
+                                                    ? AppColors.colorWhite
+                                                    : AppColors.colorBlack,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                fontFamily:
+                                                    Fonts.metropolisRegular),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  SizedBox(height: 10,),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 10),
+                                    child: Image.asset(
+                                      "assets/image/ic_netflix.webp",
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Text(
+                                    "Director · ${listData?.director}",
+                                    style: TextStyle(
+                                        color: isDark
+                                            ? AppColors.color96A4C3
+                                            : AppColors.colorGrey,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                        fontFamily: Fonts.metropolisRegular),
+                                  ),
+                                  Text(
+                                    "Actor · ${listData?.actorName}",
+                                    style: TextStyle(
+                                        color: isDark
+                                            ? AppColors.color96A4C3
+                                            : AppColors.colorGrey,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                        fontFamily: Fonts.metropolisRegular),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: Text(
+                          listData?.desc ?? "",
+                          style: TextStyle(
+                              color: isDark
+                                  ? AppColors.color96A4C3
+                                  : AppColors.colorGrey,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              fontFamily: Fonts.metropolisRegular),
                         ),
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  listData?.origin ?? "",
-                                  style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.color96A4C3
-                                          : AppColors.colorGrey,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                      fontFamily: Fonts.metropolisRegular),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(right: 10),
+                        child: Divider(
+                          color: Colors.grey.shade200,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              bool isGuest = await HelperSaveData.helperSaveData
+                                      .getBoolValue("isGuest") ??
+                                  false;
+
+                              if (isGuest) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignUpScreen()));
+                                return;
+                              } else {
+                                setState(() {
+                                  selectWatchList = !selectWatchList;
+                                });
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: selectWatchList
+                                    ? (isDark
+                                        ? AppColors.color1F2437
+                                        : AppColors.colorE8A818)
+                                    : (isDark
+                                        ? AppColors.color646D91
+                                        : Colors.grey.shade200),
+                                border: Border.all(
+                                  color: isDark
+                                      ? AppColors.color646D91
+                                      : Colors.grey.shade200,
+                                  width: 2,
                                 ),
-                                Text(
-                                  listData?.name ?? "",
-                                  style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.colorWhite
-                                          : AppColors.colorGrey,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 20,
-                                      fontFamily: Fonts.metropolisSemiBold),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 5),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              child: Text(
+                                "Watchlist",
+                                style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.colorWhite
+                                        : Colors.grey.shade700,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    fontFamily: Fonts.metropolisRegular),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              bool isGuest = await HelperSaveData.helperSaveData
+                                      .getBoolValue("isGuest") ??
+                                  false;
+
+                              if (isGuest) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignUpScreen()));
+                                return;
+                              } else {
+                                setState(() {
+                                  selectInterested = !selectInterested;
+                                });
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.color646D91
+                                    : Colors.grey.shade200,
+                                border: Border.all(
+                                  color: isDark
+                                      ? AppColors.color646D91
+                                      : Colors.grey.shade200,
+                                  width: 2,
                                 ),
-                                Text(
-                                  listData?.genreName ?? "",
-                                  style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.color96A4C3
-                                          : AppColors.colorGrey,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                      fontFamily: Fonts.metropolisRegular),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 5),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              child: Text(
+                                "Not Interested",
+                                style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.colorWhite
+                                        : Colors.grey.shade700,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    fontFamily: Fonts.metropolisRegular),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              bool isGuest = await HelperSaveData.helperSaveData
+                                      .getBoolValue("isGuest") ??
+                                  false;
+
+                              if (isGuest) {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignUpScreen()));
+                                return;
+                              } else {
+                                setState(() {
+                                  selectSeen = !selectSeen;
+                                });
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.color646D91
+                                    : Colors.grey.shade200,
+                                border: Border.all(
+                                  color: isDark
+                                      ? AppColors.color646D91
+                                      : Colors.grey.shade200,
+                                  width: 2,
                                 ),
-                                Container(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 5),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              child: Text(
+                                "Seen",
+                                style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.colorWhite
+                                        : Colors.grey.shade700,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    fontFamily: Fonts.metropolisRegular),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(right: 10),
+                        child: Divider(
+                          color: Colors.grey.shade200,
+                        ),
+                      ),
+                      listData!.firstSecondApp!.isEmpty
+                          ? Container()
+                          : Container(
+                              margin: EdgeInsets.only(left: 10),
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                "Streaming",
+                                style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.colorWhite
+                                        : AppColors.colorBlack,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    fontFamily: Fonts.metropolisRegular),
+                              ),
+                            ),
+                      listData.firstSecondApp!.isEmpty
+                          ? Container()
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: listData.firstSecondApp?.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? AppColors.color646D91
+                                        : Colors.grey.shade200,
+                                    border: Border.all(
+                                      color: isDark
+                                          ? AppColors.color646D91
+                                          : Colors.grey.shade200,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 10),
                                   padding: EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 10),
-                                  child: Image.asset(
-                                    "assets/image/ic_netflix.webp",
-                                    height: 50,
-                                    width: 50,
-                                    fit: BoxFit.cover,
+                                  child: Row(
+                                    children: [
+                                      Image.network(
+                                        listData.firstSecondApp?[index]
+                                                .application?.icon ??
+                                            "",
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          margin: EdgeInsets.only(left: 10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                listData.firstSecondApp?[index]
+                                                        .application?.name ??
+                                                    "",
+                                                style: TextStyle(
+                                                    color: isDark
+                                                        ? AppColors.colorWhite
+                                                        : AppColors.colorBlack,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                    fontFamily: Fonts
+                                                        .metropolisRegular),
+                                              ),
+                                              Text(
+                                                listData.firstSecondApp?[index]
+                                                        .appType ??
+                                                    "",
+                                                style: TextStyle(
+                                                    color: isDark
+                                                        ? AppColors.color96A4C3
+                                                        : AppColors.colorGrey,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                    fontFamily: Fonts
+                                                        .metropolisRegular),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Image.asset(
+                                        "assets/image/ic_link.png",
+                                        height: 20,
+                                        width: 20,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  "Director · ${listData?.director}",
-                                  style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.color96A4C3
-                                          : AppColors.colorGrey,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                      fontFamily: Fonts.metropolisRegular),
-                                ),
-                                Text(
-                                  "Actor · ${listData?.actorName}",
-                                  style: TextStyle(
-                                      color: isDark
-                                          ? AppColors.color96A4C3
-                                          : AppColors.colorGrey,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                      fontFamily: Fonts.metropolisRegular),
-                                ),
-                              ],
+                                );
+                              }),
+                      listData.appTypeUrls!.isEmpty
+                          ? Container()
+                          : Container(
+                              alignment: Alignment.topLeft,
+                              margin: EdgeInsets.only(left: 10),
+                              child: Text(
+                                "Rent",
+                                style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.colorWhite
+                                        : AppColors.colorBlack,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    fontFamily: Fonts.metropolisRegular),
+                              ),
                             ),
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.topRight,
-                          padding: EdgeInsets.only(
-                              top: 10, bottom: 10, right: 10, left: 27),
-                          margin: EdgeInsets.only(top: 10),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            border: Border.all(
-                              color: AppColors.colorE8A818,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              bottomLeft: Radius.circular(20),
-                            ),
-                          ),
-                          child: Text(
-                            "${listData?.bottScore}%",
-                            style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? AppColors.colorWhite
-                                    : AppColors.colorBlack,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                fontFamily: Fonts.metropolisRegular),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      child: Text(
-                        listData?.desc ?? "",
-                        style: TextStyle(
-                            color: isDark
-                                ? AppColors.color96A4C3
-                                : AppColors.colorGrey,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            fontFamily: Fonts.metropolisRegular),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      child: Divider(
-                        color: Colors.grey.shade200,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.color646D91
-                                : Colors.grey.shade200,
-                            border: Border.all(
-                              color: isDark
-                                  ? AppColors.color646D91
-                                  : Colors.grey.shade200,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          margin:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Text(
-                            "Watchlist",
-                            style: TextStyle(
-                                color: isDark
-                                    ? AppColors.colorWhite
-                                    : Colors.grey.shade700,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                fontFamily: Fonts.metropolisRegular),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.color646D91
-                                : Colors.grey.shade200,
-                            border: Border.all(
-                              color: isDark
-                                  ? AppColors.color646D91
-                                  : Colors.grey.shade200,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          margin:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Text(
-                            "Not Interested",
-                            style: TextStyle(
-                                color: isDark
-                                    ? AppColors.colorWhite
-                                    : Colors.grey.shade700,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                fontFamily: Fonts.metropolisRegular),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.color646D91
-                                : Colors.grey.shade200,
-                            border: Border.all(
-                              color: isDark
-                                  ? AppColors.color646D91
-                                  : Colors.grey.shade200,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          margin:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          child: Text(
-                            "Seen",
-                            style: TextStyle(
-                                color: isDark
-                                    ? AppColors.colorWhite
-                                    : Colors.grey.shade700,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                                fontFamily: Fonts.metropolisRegular),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      child: Divider(
-                        color: Colors.grey.shade200,
-                      ),
-                    ),
-                    listData!.firstSecondApp!.isEmpty
-                        ? Container()
-                        : Container(
-                            margin: EdgeInsets.only(left: 10),
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Streaming",
-                              style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.colorWhite
-                                      : AppColors.colorBlack,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  fontFamily: Fonts.metropolisRegular),
-                            ),
-                          ),
-                    listData.firstSecondApp!.isEmpty
-                        ? Container()
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: listData.firstSecondApp?.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? AppColors.color646D91
-                                      : Colors.grey.shade200,
-                                  border: Border.all(
+                      listData.appTypeUrls!.isEmpty
+                          ? Container()
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: listData.appTypeUrls?.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  decoration: BoxDecoration(
                                     color: isDark
                                         ? AppColors.color646D91
                                         : Colors.grey.shade200,
-                                    width: 2,
-                                  ),
-                                ),
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                                child: Row(
-                                  children: [
-                                    Image.network(
-                                      listData.firstSecondApp?[index]
-                                              .application?.icon ??
-                                          "",
-                                      height: 50,
-                                      width: 50,
-                                      fit: BoxFit.cover,
+                                    border: Border.all(
+                                      color: isDark
+                                          ? AppColors.color646D91
+                                          : Colors.grey.shade200,
+                                      width: 2,
                                     ),
-                                    Expanded(
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: 10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              listData.firstSecondApp?[index]
-                                                      .application?.name ??
-                                                  "",
-                                              style: TextStyle(
-                                                  color: isDark
-                                                      ? AppColors.colorWhite
-                                                      : AppColors.colorBlack,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      Fonts.metropolisRegular),
-                                            ),
-                                            Text(
-                                              listData.firstSecondApp?[index]
-                                                      .appType ??
-                                                  "",
-                                              style: TextStyle(
-                                                  color: isDark
-                                                      ? AppColors.color96A4C3
-                                                      : AppColors.colorGrey,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      Fonts.metropolisRegular),
-                                            ),
-                                          ],
+                                  ),
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 10),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                  child: Row(
+                                    children: [
+                                      Image.network(
+                                        listData.appTypeUrls?[index].application
+                                                ?.icon ??
+                                            "",
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          margin: EdgeInsets.only(left: 10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                listData.appTypeUrls?[index]
+                                                        .application?.name ??
+                                                    "",
+                                                style: TextStyle(
+                                                    color: isDark
+                                                        ? AppColors.colorWhite
+                                                        : AppColors.colorBlack,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                    fontFamily: Fonts
+                                                        .metropolisRegular),
+                                              ),
+                                              Text(
+                                                listData.appTypeUrls?[index]
+                                                        .price ??
+                                                    "",
+                                                style: TextStyle(
+                                                    color: isDark
+                                                        ? AppColors.color96A4C3
+                                                        : AppColors.colorGrey,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                    fontFamily: Fonts
+                                                        .metropolisRegular),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Image.asset(
-                                      "assets/image/ic_link.png",
-                                      height: 20,
-                                      width: 20,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                    listData.appTypeUrls!.isEmpty
-                        ? Container()
-                        : Container(
-                            alignment: Alignment.topLeft,
-                            margin: EdgeInsets.only(left: 10),
-                            child: Text(
-                              "Rent",
-                              style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.colorWhite
-                                      : AppColors.colorBlack,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  fontFamily: Fonts.metropolisRegular),
-                            ),
-                          ),
-                    listData.appTypeUrls!.isEmpty
-                        ? Container()
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: listData.appTypeUrls?.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? AppColors.color646D91
-                                      : Colors.grey.shade200,
-                                  border: Border.all(
-                                    color: isDark
-                                        ? AppColors.color646D91
-                                        : Colors.grey.shade200,
-                                    width: 2,
-                                  ),
-                                ),
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                                child: Row(
-                                  children: [
-                                    Image.network(
-                                      listData.appTypeUrls?[index].application
-                                              ?.icon ??
-                                          "",
-                                      height: 50,
-                                      width: 50,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: 10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              listData.appTypeUrls?[index]
-                                                      .application?.name ??
-                                                  "",
-                                              style: TextStyle(
-                                                  color: isDark
-                                                      ? AppColors.colorWhite
-                                                      : AppColors.colorBlack,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      Fonts.metropolisRegular),
-                                            ),
-                                            Text(
-                                              listData.appTypeUrls?[index]
-                                                      .price ??
-                                                  "",
-                                              style: TextStyle(
-                                                  color: isDark
-                                                      ? AppColors.color96A4C3
-                                                      : AppColors.colorGrey,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      Fonts.metropolisRegular),
-                                            ),
-                                          ],
-                                        ),
+                                      Image.asset(
+                                        "assets/image/ic_link.png",
+                                        height: 20,
+                                        width: 20,
+                                        fit: BoxFit.cover,
                                       ),
-                                    ),
-                                    Image.asset(
-                                      "assets/image/ic_link.png",
-                                      height: 20,
-                                      width: 20,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                  ],
+                                    ],
+                                  ),
+                                );
+                              }),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
   }
@@ -589,7 +687,7 @@ class _HomeScreen extends State<HomeScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Dialog(
-              insetPadding: EdgeInsets.zero,
+                insetPadding: EdgeInsets.zero,
                 shadowColor: AppColors.colorTransparent,
                 backgroundColor: Colors.transparent,
                 child: Container(
@@ -695,7 +793,10 @@ class _HomeScreen extends State<HomeScreen> {
                                   "app_type": filterMap["app_type"]!.join(','),
                                 };
 
-                                print("🔗 Sending filter to API:\n$apiParams");
+                                if (kDebugMode) {
+                                  print(
+                                      "🔗 Sending filter to API:\n$apiParams");
+                                }
 
                                 homeProvider.submitFilter(apiParams, context);
 
@@ -802,9 +903,7 @@ class _HomeScreen extends State<HomeScreen> {
                               // Right Filter Items
                               Expanded(
                                 flex: 3,
-                                child: selectCategoryTitle ==
-                                        categoryArray[
-                                            2]
+                                child: selectCategoryTitle == categoryArray[2]
                                     ? Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -839,9 +938,7 @@ class _HomeScreen extends State<HomeScreen> {
                                           ),
                                         ],
                                       )
-                                    : selectCategoryTitle ==
-                                            categoryArray[
-                                                3]
+                                    : selectCategoryTitle == categoryArray[3]
                                         ? Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -1074,7 +1171,7 @@ class _HomeScreen extends State<HomeScreen> {
                         width: 10,
                       ),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Provider.of<HomeProvider>(context, listen: false)
                               .logout(context);
                         },

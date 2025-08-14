@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   Future<User?> signInWithGoogle(BuildContext context) async {
     try {
+      final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
       await _googleSignIn.signOut();
       await _googleSignIn.disconnect();
       final googleUser = await _googleSignIn.signIn();
@@ -31,9 +33,8 @@ class GoogleAuthService {
         final password = user.uid;
         final imageUrl = user.photoURL ?? "";
 
-        final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
         bool success = await signUpProvider.signUp(name, email, password);
-
+        if (!context.mounted) return user;
         if (success) {
           SharedPreferences pref =
           await SharedPreferences
@@ -43,15 +44,17 @@ class GoogleAuthService {
               signUpProvider.signUpUserModel?.data
                   ?.accessToken?.token ??
                   "");
-          pref.setBool("isLoginUser", true);
+          pref.setBool("isLoginUserGoogle", true);
           pref.setString("profileImage", imageUrl);
           pref.setString("userName", name);
           pref.setString("userEmail", email);
+          if (!context.mounted) return user;
           // Step 5: Navigate to home screen
           Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (_) => HomeScreen()),
           );
         } else {
+          if (!context.mounted) return user;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(signUpProvider.message ?? "Signup failed")),
           );
@@ -60,7 +63,9 @@ class GoogleAuthService {
 
       return user;
     } catch (e) {
-      print("Sign-in error: $e");
+      if (kDebugMode) {
+        print("Sign-in error: $e");
+      }
       return null;
     }
   }
