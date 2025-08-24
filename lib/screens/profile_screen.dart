@@ -41,7 +41,6 @@ class _ProfileScreen extends State<ProfileScreen> {
   void initState() {
     super.initState();
     saveData();
-    countryApi();
   }
 
   LoginUserModel? user;
@@ -72,7 +71,7 @@ class _ProfileScreen extends State<ProfileScreen> {
         tokenUser = pref?.getString(UserDataSave.token);
       }
     }
-    getProfileApi();
+    countryApi();
   }
 
   bool clickLoad = false;
@@ -106,6 +105,7 @@ class _ProfileScreen extends State<ProfileScreen> {
 
     if (countryModel!.status == "200") {
       dataList = countryModel!.data!;
+      getProfileApi();
     } else {
       Fluttertoast.showToast(
           msg: countryModel!.message!,
@@ -138,17 +138,17 @@ class _ProfileScreen extends State<ProfileScreen> {
 
         countryNameYou = uniqueCountries
             .firstWhere(
-              (e) => e.id == countryInId,
+              (e) => e.id.toString() == countryInId.toString(),
               orElse: () => DatumCountry(id: 0, countryName: ""),
             )
-            .countryName!;
+            .countryName ?? "";
 
         countryNameBorn = uniqueCountries
             .firstWhere(
-              (e) => e.id == countryBornId,
+              (e) => e.id.toString() == countryBornId.toString(),
               orElse: () => DatumCountry(id: 0, countryName: ""),
             )
-            .countryName!;
+            .countryName ?? "";
         profileImageUrl = profileModel?.data?.profileImageUrl;
       });
     } else {
@@ -325,8 +325,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                               hintText: "Enter age",
                               textController: ageText,
                               keyboardType: TextInputType.number,
-                              icon: ImagePaths.age,
-                              whiteIcon: ImagePaths.ageWhite,
+                              icon: ImagePaths.time,
+                              whiteIcon: ImagePaths.timeWhite,
                               inputFormatters: [
                                 LengthLimitingTextInputFormatter(2),
                                 FilteringTextInputFormatter.digitsOnly,
@@ -828,7 +828,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                   },
                                 )
                               : Image.asset(
-                                  "assets/image/ic_profile.png",
+                                  "assets/image/ic_profile_image_demi.png",
                                   height: 110,
                                   width: 110,
                                   fit: BoxFit.cover,

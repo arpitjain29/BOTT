@@ -15,7 +15,6 @@ import '../model/login_user_model.dart';
 import '../provider/home_provider.dart';
 import '../utils/app_colors.dart';
 import '../utils/fonts_class.dart';
-import '../utils/google_auth_service.dart';
 import '../utils/helper_save_data.dart';
 import '../utils/util_api.dart';
 
@@ -171,12 +170,14 @@ class _HomeScreen extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                    Row(
-                                      children: [
-                                        Expanded(child:
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
                                             Text(
                                               listData?.origin ?? "",
@@ -212,45 +213,48 @@ class _HomeScreen extends State<HomeScreen> {
                                                       Fonts.metropolisRegular),
                                             ),
                                           ],
-                                        ),),
-                                        Container(
-                                          alignment: Alignment.topRight,
-                                          padding: EdgeInsets.only(
-                                              top: 10,
-                                              bottom: 10,
-                                              right: 10,
-                                              left: 27),
-                                          margin: EdgeInsets.only(top: 10),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            border: Border.all(
-                                              color: AppColors.colorE8A818,
-                                              width: 2,
-                                            ),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(20),
-                                              bottomLeft: Radius.circular(20),
-                                            ),
+                                        ),
+                                      ),
+                                      Container(
+                                        alignment: Alignment.topRight,
+                                        padding: EdgeInsets.only(
+                                            top: 10,
+                                            bottom: 10,
+                                            right: 10,
+                                            left: 27),
+                                        margin: EdgeInsets.only(top: 10),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          border: Border.all(
+                                            color: AppColors.colorE8A818,
+                                            width: 2,
                                           ),
-                                          child: Text(
-                                            "${listData?.bottScore}%",
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? AppColors.colorWhite
-                                                    : AppColors.colorBlack,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 14,
-                                                fontFamily:
-                                                    Fonts.metropolisRegular),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            bottomLeft: Radius.circular(20),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  SizedBox(height: 10,),
+                                        child: Text(
+                                          "${listData?.bottScore}%",
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? AppColors.colorWhite
+                                                  : AppColors.colorBlack,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14,
+                                              fontFamily:
+                                                  Fonts.metropolisRegular),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 10),
@@ -261,7 +265,9 @@ class _HomeScreen extends State<HomeScreen> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  SizedBox(height: 10,),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                   Text(
                                     "Director · ${listData?.director}",
                                     style: TextStyle(
@@ -708,7 +714,8 @@ class _HomeScreen extends State<HomeScreen> {
                       children: [
                         // Header Row
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
                               child: Container(
@@ -1340,102 +1347,189 @@ class _HomeScreen extends State<HomeScreen> {
                   );
                 }),
           ),
-          Row(
-            children: [
-              InkWell(
-                onTap: () {
-                  _showAlertFilterDialog(context, homeProvider);
-                },
-                child: Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.all(5),
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color:
-                        isDark ? AppColors.color161B2E : AppColors.colorE5E5E5,
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(
-                      color: isDark
-                          ? AppColors.color313A5A
-                          : AppColors.colorE8A818,
-                      width: 1.0,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        ImagePaths.filter,
-                        height: 20,
-                        width: 20,
-                        color:
-                            isDark ? AppColors.colorWhite : AppColors.colorGrey,
+          // Row(
+          //   children: [
+          //     InkWell(
+          //       onTap: () {
+          //         _showAlertFilterDialog(context, homeProvider);
+          //       },
+          //       child: Container(
+          //         alignment: Alignment.topLeft,
+          //         margin: EdgeInsets.all(5),
+          //         padding: EdgeInsets.all(10),
+          //         decoration: BoxDecoration(
+          //           color:
+          //               isDark ? AppColors.color161B2E : AppColors.colorE5E5E5,
+          //           borderRadius: BorderRadius.all(Radius.circular(5)),
+          //           border: Border.all(
+          //             color: isDark
+          //                 ? AppColors.color313A5A
+          //                 : AppColors.colorE8A818,
+          //             width: 1.0,
+          //             style: BorderStyle.solid,
+          //           ),
+          //         ),
+          //         child: Row(
+          //           children: [
+          //             Image.asset(
+          //               ImagePaths.filter,
+          //               height: 20,
+          //               width: 20,
+          //               color:
+          //                   isDark ? AppColors.colorWhite : AppColors.colorGrey,
+          //             ),
+          //             Container(
+          //               margin: EdgeInsets.only(left: 5),
+          //               child: Text(
+          //                 "More Filters",
+          //                 textAlign: TextAlign.center,
+          //                 style: TextStyle(
+          //                     color: isDark
+          //                         ? AppColors.colorWhite
+          //                         : Colors.grey.shade700,
+          //                     fontSize: 16,
+          //                     fontWeight: FontWeight.w400,
+          //                     fontFamily: Fonts.metropolisRegular),
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //     Expanded(
+          //       child: SizedBox(
+          //         height: 55,
+          //         child: ListView.builder(
+          //             scrollDirection: Axis.horizontal,
+          //             itemCount: listArray.length,
+          //             itemBuilder: (context, index) {
+          //               return InkWell(
+          //                 onTap: () {},
+          //                 child: Container(
+          //                   alignment: Alignment.center,
+          //                   margin: EdgeInsets.all(5),
+          //                   padding: EdgeInsets.all(10),
+          //                   decoration: BoxDecoration(
+          //                     color: isDark
+          //                         ? AppColors.color161B2E
+          //                         : AppColors.colorE5E5E5,
+          //                     borderRadius:
+          //                         BorderRadius.all(Radius.circular(5)),
+          //                     border: Border.all(
+          //                       color: isDark
+          //                           ? AppColors.color313A5A
+          //                           : AppColors.colorE8A818,
+          //                       width: 1.0,
+          //                       style: BorderStyle.solid,
+          //                     ),
+          //                   ),
+          //                   child: Container(
+          //                     margin: EdgeInsets.only(left: 5),
+          //                     child: Text(
+          //                       listArray[index],
+          //                       textAlign: TextAlign.center,
+          //                       style: TextStyle(
+          //                           color: isDark
+          //                               ? AppColors.color646D91
+          //                               : Colors.grey.shade700,
+          //                           fontSize: 16,
+          //                           fontWeight: FontWeight.w400,
+          //                           fontFamily: Fonts.metropolisRegular),
+          //                     ),
+          //                   ),
+          //                 ),
+          //               );
+          //             }),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+
+          // Replace your Row(...) with this:
+          SizedBox(
+            height: 55,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      _showAlertFilterDialog(context, homeProvider);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.color161B2E : AppColors.colorE5E5E5,
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        border: Border.all(
+                          color: isDark ? AppColors.color313A5A : AppColors.colorE8A818,
+                          width: 1.0,
+                        ),
                       ),
-                      Container(
-                        margin: EdgeInsets.only(left: 5),
-                        child: Text(
-                          "More Filters",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            ImagePaths.filter,
+                            height: 20,
+                            width: 20,
+                            color: isDark ? AppColors.colorWhite : AppColors.colorGrey,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            "More Filters",
+                            style: TextStyle(
                               color: isDark
                                   ? AppColors.colorWhite
                                   : Colors.grey.shade700,
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              fontFamily: Fonts.metropolisRegular),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  height: 55,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: listArray.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {},
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.all(5),
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? AppColors.color161B2E
-                                  : AppColors.colorE5E5E5,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              border: Border.all(
-                                color: isDark
-                                    ? AppColors.color313A5A
-                                    : AppColors.colorE8A818,
-                                width: 1.0,
-                                style: BorderStyle.solid,
-                              ),
-                            ),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 5),
-                              child: Text(
-                                listArray[index],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: isDark
-                                        ? AppColors.color646D91
-                                        : Colors.grey.shade700,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: Fonts.metropolisRegular),
-                              ),
+                              fontFamily: Fonts.metropolisRegular,
                             ),
                           ),
-                        );
-                      }),
-                ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Now loop for listArray items
+                  ...listArray.map((item) {
+                    return InkWell(
+                      onTap: () {},
+                      child: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppColors.color161B2E
+                              : AppColors.colorE5E5E5,
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          border: Border.all(
+                            color: isDark
+                                ? AppColors.color313A5A
+                                : AppColors.colorE8A818,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Text(
+                          item,
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.color646D91
+                                : Colors.grey.shade700,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: Fonts.metropolisRegular,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ],
               ),
-            ],
+            ),
           ),
           Expanded(
             child:
@@ -1667,11 +1761,13 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Widget _defaultProfileIcon() {
-    return Image.asset(
-      "assets/image/ic_profile.png",
-      height: 50,
-      width: 50,
-      fit: BoxFit.cover,
+    return ClipOval(
+      child: Image.asset(
+        "assets/image/ic_profile_image_demi.png",
+        height: 50,
+        width: 50,
+        fit: BoxFit.cover,
+      ),
     );
   }
 

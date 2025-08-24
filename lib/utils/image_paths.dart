@@ -10,6 +10,8 @@ class ImagePaths{
   static const String userWhite = "assets/image/ic_user_white.png";
   static const String age = "assets/image/ic_age.png";
   static const String ageWhite = "assets/image/ic_age_white.png";
+  static const String time = "assets/image/ic_time.png";
+  static const String timeWhite = "assets/image/ic_time_white.png";
   static const String gender = "assets/image/ic_gender.png";
   static const String genderWhite = "assets/image/ic_gender_white.png";
   static const String filter = "assets/image/ic_filter.png";
