@@ -59,7 +59,7 @@ class UtilApi {
     return file;
   }
 
-  static String baseUrl = "https://bestofott.com/api/";
+  static String baseUrl = "https://playnemo.com/api/";
   static String signupApi = "${baseUrl}signup";
   static String loginApi = "${baseUrl}login";
   static String forgotPasswordApi = "${baseUrl}forgot-password";
