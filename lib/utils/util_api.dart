@@ -760,7 +760,6 @@ class UtilApi {
     request.headers["Authorization"] = "Bearer $token";
 
     var response = await request.send();
-
     //Get the response from the server
     var responseData = await response.stream.toBytes();
     var responseString = String.fromCharCodes(responseData);
